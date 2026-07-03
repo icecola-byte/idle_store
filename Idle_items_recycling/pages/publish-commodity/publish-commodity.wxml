@@ -1,0 +1,239 @@
+<view class="public-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+            title="{{navigatorTitle}}"
+            bind:click-left="onBack"
+            style="background:#a3c373;">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <view class="t-icon t-icon-wenti" bind:tap="gotoHelp"></view>
+
+    <view class="form-container">
+        <form id="form" bindsubmit="postCommodityInfo">
+            <van-cell-group>
+                <van-transition show="{{ true }}" duration="{{ {enter: 500, leave: 0} }}" name="slide-right">
+                    <van-field
+                        value="{{ commodityClassfiyView }}"
+                        readonly
+                        title-width="4.2em"
+                        label="分类"
+                        placeholder="请选择商品分类"
+                        bind:tap="onChooseClassify"
+                        required="{{true}}"
+                        center="{{true}}"
+                        border="{{true}}"
+                        is-link
+                        name="category"
+                    >
+                    </van-field>
+                </van-transition>
+                
+                    
+                <van-transition show="{{ true }}" duration="{{ {enter: 600, leave: 0} }}" name="slide-right">
+                    <van-field
+                        type="textarea"
+                        required="{{true}}"
+                        value="{{ commodityInfo.name }}"
+                        title-width="4.2em"
+                        placeholder="请输入商品名称"
+                        label="商品名称"
+                        border="{{true}}"
+                        clearable="{{true}}"
+                        autosize
+                        name="name"
+                    />
+                </van-transition>
+
+                
+
+                <van-transition show="{{ true }}" duration="{{ {enter: 700, leave: 0} }}" name="slide-right">
+                    <van-cell title="商品数量"
+                        title-width="4.2em"
+                        required="{{true}}">
+                        <van-stepper name="amount" 
+                            value="{{ commodityInfo.amount }}"
+                            min="1" 
+                            integer 
+                            bind:change="onAmountChange"/>
+                    </van-cell>
+                </van-transition>
+
+                <van-transition show="{{ true }}" duration="{{ {enter: 800, leave: 0} }}" name="slide-right">
+                    <van-cell title="商品图片"
+                        title-width="4.2em"
+                        required="{{true}}">
+                        <van-uploader file-list="{{ pictureFileList }}" 
+                            bind:after-read="afterSelectedPictures" 
+                            bind:delete="deleteImg"
+                            max-count="5"
+                            multiple="true"
+                            name="pictureUrl"
+                        />
+                    </van-cell>
+                </van-transition>
+                <van-transition show="{{ true }}" duration="{{ {enter: 900, leave: 0} }}" name="slide-right">
+                    <van-cell title="物流方式"
+                        title-width="4.2em"
+                        required="{{true}}"
+                        border="{{false}}">
+                        <view class="t-icon t-icon-wentiqishouwenti" slot="right-icon"></view>
+                    </van-cell>
+                    <van-checkbox-group 
+                        value="{{ logisticsResult }}"
+                        bind:change="onLogisticsChange"
+                        name="logisticsMode">
+                        <van-cell-group border="{{false}}">
+                            <van-cell
+                                wx:for="{{ logisticsValues }}"
+                                wx:key="index"
+                                title="{{ item }}"
+                                value-class="value-class"
+                                clickable
+                                data-index="{{ index }}"
+                                bind:click="toggle"
+                                border="{{false}}"
+                            >
+                                <van-checkbox
+                                catch:tap="noop"
+                                disabled="{{logisticsAbled && index !== 0}}"
+                                class="checkboxes-{{ index }}"
+                                name="{{ logisticsKeys[index] }}"
+                                checked-color="#a3c373"
+                                />
+                            </van-cell>
+                        </van-cell-group>
+                  </van-checkbox-group>
+                </van-transition>
+                
+                <van-transition show="{{ addressInputShow }}" duration="{{ {enter: 1000, leave: 0} }}" name="slide-left">
+                    <van-field
+                        type="text"
+                        required="{{true}}"
+                        value="{{ addressDetail }}"
+                        title-width="4.2em"
+                        placeholder="详细地址, 例1号楼1单元101室"
+                        label="门牌号"
+                        border="{{true}}"
+                        clearable="{{true}}"
+                        center="true"
+                        name="addressDetail"
+                    />
+                    <van-field
+                        value="{{ dateSelectValue }}"
+                        readonly
+                        title-width="4.2em"
+                        label="取货时间"
+                        placeholder="请选择取货时间"
+                        bind:tap="showDateSelect"
+                        required
+                        center="{{true}}"
+                        border="{{true}}"
+                        is-link
+                        name="appointmentTime">
+
+                    </van-field>
+                    <!-- <van-cell required title="取货时间" is-link bind:click="showDateSelect" /> -->
+                </van-transition>
+
+                <van-transition show="{{ !addressInputShow }}" duration="{{ {enter: 1000, leave: 0} }}" name="slide-right">
+                    <van-field
+                        type="digit"
+                        required="{{true}}"
+                        value="{{ commodityInfo.price }}"
+                        title-width="4.2em"
+                        placeholder="请输商品单价"
+                        label="单价"
+                        border="{{true}}"
+                        clearable="{{true}}"
+                        bind:blur="onPriceFinish"
+                        center="true"
+                        name="price"
+                    />
+                </van-transition>
+
+                <van-transition show="{{ !addressInputShow }}" duration="{{ {enter: 1100, leave: 0} }}" name="slide-right">
+                    <van-checkbox-group value="{{ drainagePlanResult }}" bind:change="toggleDrainagePlanCheckbox">
+                        <van-cell-group>
+                            <van-cell
+                                title="是否加入引流计划"
+                                value-class="value-class"
+                            >
+                            <van-checkbox
+                                catch:tap="noop"
+                                class="drainagePlanCheckbox"
+                                name="drainagePlan"
+                                checked-color="#a3c373"
+                            />
+                           </van-cell>
+                        </van-cell-group>
+                    </van-checkbox-group>
+                </van-transition>
+                <van-transition show="{{ true }}" duration="{{ {enter: 1200, leave: 0} }}" name="slide-right">
+                    <van-field
+                        class="remark-input"
+                        type="textarea"
+                        required="{{false}}"
+                        value="{{ commodityInfo.remark }}"
+                        title-width="4.2em"
+                        placeholder="商品备注: 如使用年限, 新旧程度, 注意事项等"
+                        label="备注"
+                        border="{{true}}"
+                        clearable="{{true}}"
+                        autosize="{{true}}"
+                        name="remark"
+                        maxlength="500"
+                        show-word-limit="true"
+                    />
+                </van-transition>
+            </van-cell-group>
+            <van-transition show="{{ true }}" class="form-btn-container-father" duration="{{ {enter: 1300, leave: 0} }}" name="slide-right">
+                <view class="form-btn-container">
+                    <van-button 
+                        wx:if="{{resetButton}}"
+                        type="default" 
+                        color="#fdf2cb"
+                        bind:tap="resetForm">
+                        <text style="color: #f9ce00;">重置</text>
+                    </van-button>
+                    <van-button type="default" 
+                        form-type="submit" 
+                        color="#edfff0">
+                            <text style="color: #42c05c;">提交</text>
+                    </van-button>
+                </view>
+            </van-transition>
+            <van-popup show="{{ commodityClassfiyPopUp }}" round position="bottom">
+                <van-cascader
+                  wx:if="{{ commodityClassfiyPopUp }}"
+                  value="{{ commodityInfo.category }}"
+                  swipeable="true"
+                  title="请选择商品分类"
+                  options="{{ categoryOptions }}"
+                  bind:close="onCategoryChooseClose"
+                  bind:finish="onCategoryChooseFinish"
+                  active-color="#a3c373"
+                  lock-scroll="true"
+                />
+            </van-popup>
+
+            <van-popup show="{{ datetimePickerShow }}" position="bottom">
+                <van-datetime-picker
+                    type="date"
+                    value="{{ dateSelect.currentDate }}"
+                    min-date="{{ dateSelect.minDate }}"
+                    max-date="{{ dateSelect.maxDate }}"
+                    formatter="{{ formatter }}"
+                    bind:confirm="onDatePickerConfirm"
+                    bind:cancel="onDatePickerCancel"
+                ></van-datetime-picker>
+            </van-popup>
+            
+        </form>
+    </view>
+    <van-notify id="van-notify" top="20px"/>
+    <van-toast id="van-toast"/>
+
+</view>

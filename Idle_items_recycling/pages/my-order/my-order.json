@@ -1,0 +1,5 @@
+{
+    "usingComponents": {
+        "order-detail-show": "/components/order-detail-show/order-detail-show"
+    }
+}

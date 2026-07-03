@@ -1,0 +1,102 @@
+<view class="userInfo-update-container">
+    <view class="avatar-container flex-row-align-item-center" style="background-image: url({{userInfo.avatarUrl}});">
+        <view class="background-blur">
+            <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="chooseAvatar">
+                <image class="avatar-image" name="avatarUrl" src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+            </button>
+        </view>
+    </view>
+    <view class="another-userinfo-container">
+        <form bindsubmit="updateUserInfo">
+            <view class="one-info-container">
+                <view class="t-icon t-icon-xingming"></view>
+                <van-field
+                    type="nickname"
+                    name="username"
+                    title-width="4.2em"
+                    max-length="10"
+                    value="{{ userInfo.username }}"
+                    label="用户名"
+                    border="{{ true }}"
+                />
+            </view>
+            <view class="one-info-container">
+                <view class="t-icon t-icon-xingbie"></view>
+                <van-radio-group class="sex-select-radio-group" value="{{ userInfo.sex }}"
+                    bind:change="onSexChange"
+                    direction="horizontal"
+                    name="sex">
+                    <van-radio class="sex-select-radio" name="MAN" checked-color="#479f60">男</van-radio>
+                    <van-radio class="sex-select-radio" name="WOMAN" checked-color="#479f60">女</van-radio>
+                </van-radio-group>
+            </view>
+            <view class="one-info-container">
+                <view class="t-icon t-icon-shouji"></view>
+                <van-field
+                    title-width="4.2em"
+                    readonly="true"
+                    value="{{userInfo.phone}}"
+                    label="手机号"
+                    name="phone"
+                    maxlength="11"
+                    error-message="{{phoneInputErrorMessage}}"
+                    border="{{ true }}"
+                />
+            </view>
+            <view class="one-info-container">
+                <view class="t-icon t-icon-mingpian"></view>
+                <van-field
+                    title-width="4.2em"
+                    value="{{ userInfo.realName }}"
+                    label="真实姓名"
+                    name="realName"
+                    border="{{ true }}"
+                />
+            </view>
+            <view class="one-info-container">
+                <view class="t-icon t-icon-dizhi"></view>
+                <van-field
+                    title-width="4.2em"
+                    type="textarea"
+                    value="{{ communityLocation }}"
+                    label="绑定社区"
+                    border="{{ true }}"
+                    readonly="true"
+                    autosize="true"
+                    center="true"
+                    />
+                    <!-- 暂不支持修改所在地址 -->
+                    <!-- is-link="true" -->
+                    <!-- bind:tap="selectCommunity" -->
+            </view>
+            <view class="form-btn-container">
+                <van-button type="default"
+                    color="#fdf2cb"
+                    bind:tap="reBack">
+                    <text style="color: #f9ce00;">返回</text>
+                </van-button>
+                <van-button type="default"
+                    form-type="submit"
+                    color="#edfff0">
+                        <text style="color: #42c05c;">提交</text>
+                </van-button>
+            </view>
+        </form>
+    </view>
+    <!-- 选择地址弹出层 -->
+    <van-popup show="{{ addressPopupShow }}" round position="bottom">
+        <van-cascader
+            wx:if="{{ addressPopupShow }}"
+            title="请选择所在地区"
+            value="{{communityValue}}"
+            active-color="#ee0a24"
+            options="{{ communityOptions }}"
+            bind:close="onAddressSelectClose"
+            bind:finish="onAddressSelectFinish"
+        />
+    </van-popup>
+    <!-- 通知 -->
+    <van-notify id="van-notify" />
+    <van-dialog id="van-dialog" />
+    <van-toast id="van-toast" />
+</view>

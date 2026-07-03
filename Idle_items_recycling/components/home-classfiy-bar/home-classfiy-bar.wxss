@@ -1,0 +1,20 @@
+.home-classify-bar-container{
+    font-size: 0.9em;
+    color: #ffffff;
+    height: 4vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20rpx 10rpx;
+}
+
+.classfiy-bar-container{
+    width: 100%;
+    white-space: nowrap;
+    
+}
+
+.category-item{
+    display: inline-block;
+    padding: 0 15rpx;
+}

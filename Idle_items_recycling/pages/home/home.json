@@ -1,0 +1,7 @@
+{
+    "usingComponents": {
+        "home-classfiy-bar": "/components/home-classfiy-bar/home-classfiy-bar",
+        "commodity-browse-show": "/components/commodity-browse-show/commodity-browse-show"
+    },
+    "onReachBottomDistance": 50
+}

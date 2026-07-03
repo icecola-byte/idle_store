@@ -1,0 +1,9 @@
+<view class="home-classify-bar-container">
+  <scroll-view class="classfiy-bar-container" enable-flex scroll-x>
+    <block wx:for="{{category}}" wx:key="value">
+      <view class="category-item" data-id="{{item.value}}" bind:tap="gotoCommodityBrowse">
+        {{item.text}}
+      </view>
+    </block>
+  </scroll-view>
+</view>

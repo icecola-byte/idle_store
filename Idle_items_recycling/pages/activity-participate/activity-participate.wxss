@@ -1,0 +1,81 @@
+.van-nav-bar{
+    background-image: linear-gradient(-225deg, #a1ffce 0%, #faffd1 100%) !important;
+}
+.navigator-bar-title-text{
+    color: #a3c373;
+}
+
+.commodity-select-container{
+    background-color: #ffffff;
+    padding: 20rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.commodity-select-card{
+    width: 650rpx;
+    display: flex;
+    flex-direction: column;
+    padding: 20rpx;
+    background-color: #ffffff;
+    margin-bottom: 20rpx;
+    border-radius: 10rpx;
+    border: 1px solid #f5f5f5;
+    box-shadow: 1px 1px 15px #f5f5f5;
+}
+
+.commodity-name-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #333333;
+    margin-bottom: 16rpx;
+}
+
+.checkbox-item{
+    border-radius: 50%;
+}
+
+.picture-amount-container{
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    color: #8b9a9f;
+    font-size: 0.8rem;
+}
+
+.commodity-picture{
+    width: 160rpx;
+    height: 160rpx;
+    border-radius: 10rpx;
+}
+.amount-container{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+}
+
+.user-have-select-commodity-show{
+    width: 700rpx;
+}
+
+.commodity-item{
+    display: flex;
+    flex-direction: column;
+    padding: 20rpx;
+    border: 1px solid #f5f5f5;
+    box-shadow: 1px 1px 15px #f5f5f5;
+    margin-top: 10rpx;
+    border-radius: 10rpx;
+}
+
+.commodity-item .name-isLove-container, .commodity-item .picture-amount-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.commodity-item .name-isLove-container{
+    margin-bottom: 10rpx;
+}

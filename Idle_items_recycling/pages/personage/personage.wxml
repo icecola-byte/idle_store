@@ -1,0 +1,95 @@
+<view class="personal-container" style="margin-top: {{containerMarginTop}};">
+    <!-- 个人信息 -->
+    <view class="person-info-container">
+        <view class="t-icon t-icon-xingqiu" style="top: {{xingqiuTop}};"></view>
+        <!-- 头像及用户名 -->
+        <view class="user-head-name-container">
+            <view class="head-container">
+                <image src="{{userInfo.avatarUrl}}" mode="aspectFill"></image>
+            </view>
+            <view class="username-container flex-row-align-item-center">
+                <view class="t-icon t-{{userInfo.sex === 'MAN' ? 'icon-xingbienan' : 'icon-xingbienv' }}"></view>
+                <view><text>{{userInfo.username}}</text></view>
+                <view class="t-icon t-icon-bianji1 margin-left-10" bind:tap="gotoUserInfoChange"></view>
+            </view>
+        </view>
+        <!-- 积分面版 -->
+        <view class="integral-container">
+            <view class="text-container">
+                <text>我的硬币</text>
+            </view>
+            <view class="balance-container flex-row-align-item-center margin-top-10">
+                <view class="t-icon t-icon-jinbi"></view>
+                <view><text class="margin-left-10">{{userInfo.coinBalance}}</text></view>
+            </view>
+        </view>
+    </view>
+    <view class="main-service-container box-shadow">
+        <view class="main-service-order" bind:tap="gotoMyOrder">
+            <view class="t-icon t-icon-dingdan"></view>
+            <view class="main-service-order-text">
+                <text>我的订单</text>
+            </view>
+        </view>
+        <view class="main-service-commodity" bind:tap="gotoMyCommodity">
+            <view class="t-icon t-icon-gouwuche"></view>
+            <view class="main-service-commodity-text">
+                <text>我的商品</text>
+            </view>
+        </view>
+        <view class="main-service-favorite" bind:tap="gotoFavorite">
+            <view class="t-icon t-icon-shoucang"></view>
+            <view class="main-service-favorite-text">
+                <text>收藏夹</text>
+            </view>
+        </view>
+        <view class="main-service-location" bind:tap="gotoCommunityActivity">
+            <view class="t-icon t-icon-dizhi"></view>
+            <view class="main-service-location-text">
+                <text>社区活动</text>
+            </view>
+        </view>
+    </view>
+    <van-divider dashed contentPosition="center"
+                textColor="#a0c375"
+                borderColor="#a0c375"><view class="t-icon t-icon-weixiao"></view>其他服务</van-divider>
+    <view class="other-service-container box-shadow">
+        <view class="other-service-publish other-service-item" bind:tap="gotoPublishCommodityPage">
+            <view class="t-icon t-icon-fabu"></view>
+            <view class="other-service-publish-text other-service-item-text">发布商品</view>
+        </view>
+        <view class="other-service-coupon other-service-item" bind:tap="gotoCouponPage">
+            <view class="t-icon t-icon-youhuijuan"></view>
+            <view class="other-service-coupon-text other-service-item-text">优惠卷</view>
+        </view>
+        <view class="other-service-history other-service-item" bind:tap="gotoHistory">
+            <view class="t-icon t-icon-jishi-wode-liulanjilu"></view>
+            <view class="other-service-history-text other-service-item-text">浏览记录</view>
+        </view>
+        <view class="other-service-help-center other-service-item" bind:tap="gotoHelp">
+            <view class="t-icon t-icon-bangzhuzhongxin"></view>
+            <view class="other-service-help-center-text other-service-item-text">帮助中心</view>
+        </view>
+        <view class="other-service-feedback other-service-item">
+            <button class="contact-btn other-service-feedback-text other-service-item-text" open-type="contact">
+                <view class="t-icon t-icon-yijianfankui"></view>
+                联系我们
+            </button>
+        </view>
+        <view class="other-service-about other-service-item" bind:tap="gotoAbout">
+            <view class="t-icon t-icon-guanyuwomen"></view>
+            <view class="other-service-about-text other-service-item-text">关于我们</view>
+        </view>
+    </view>
+
+    <!-- 用户退出登录 -->
+    <view class="login-out-btn-container">
+        <van-button type="default"
+            color="#fdf2cb"
+            bind:tap="loginOut"
+            size="large">
+            <text style="color: #f9ce00;">退出登录</text>
+        </van-button>
+    </view>
+    <van-dialog id="van-dialog" />
+</view>

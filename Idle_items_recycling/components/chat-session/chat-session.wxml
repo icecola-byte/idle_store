@@ -1,0 +1,23 @@
+<view class="chat-session-item-container">
+    <view class="avatar-container">
+        <view class="avatar-image-container">
+            <image class="avatar" src="{{info.displayAvatarUrl}}" mode="aspectFill" />
+            <view wx:if="{{info.unreadCount > 0}}" class="unread-badge">
+                {{info.unreadCount > 99 ? '99+' : info.unreadCount}}
+            </view>
+        </view>
+    </view>
+    <view class="main-content-container">
+        <view class="title-content-container">
+            <view class="title-container">
+                <text class="title-text">{{info.displayName}}</text>
+            </view>
+            <view class="content-container">
+                <text class="content-text">{{info.lastMessage}}</text>
+            </view>
+        </view>
+        <view class="time-container">
+            <text class="time-text">{{info.lastMessageTimeText}}</text>
+        </view>
+    </view>
+</view>

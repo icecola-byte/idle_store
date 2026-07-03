@@ -1,0 +1,135 @@
+.home-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+    min-height: 101vh;
+}
+.header-container{
+    background-color:#9cc377;
+    width: 100%;
+    height: 11vh;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+.search-and-location-container{
+    position: absolute;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.location-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 150rpx;
+    margin-left: 20rpx;
+}
+
+.location-container .location-text{
+    font-size: 0.8em;
+}
+/* 搜索功能 --> 暂时搁置 */
+.search-container{
+    width: 300rpx;
+    margin-left: 10rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* background-color: #ffffff; */
+    padding: 10rpx 20rpx;
+    border-radius: 15px;
+}
+
+/* .search-container van-icon{
+    color: #808080;
+}
+
+.search-input{
+    margin-left: 14rpx;
+    font-size: 0.8em;
+} */
+
+.classfiy-container{
+    /* #fff2cc #fffbee */
+    background-color: #9cc377;
+}
+
+.other-options-container{
+    height: 14vh;
+}
+
+.other-options-background{
+    position: relative;
+    background-color: #9cc377;
+    width: 100%;
+    height: 10vh;
+    border-end-start-radius: 20rpx;
+    border-end-end-radius: 20rpx;
+}
+
+.other-options-content-container{
+    background-color: #ffffff;
+    position: relative;
+    border-radius: 10rpx;
+    bottom: 8vh;    
+    height: 12vh;
+    width: 98%;
+    margin-left: 1%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    font-size: 0.75em;
+    color: #9cc377;
+}
+
+.other-options-on-sale-container, .other-options-new-product-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.t-icon-shizhong, .t-icon-youhuijuan1{
+    width: 32px;
+    height: 32px;
+}
+
+.on-sale-text-container, .new-product-text-container{
+    margin-top: 6rpx;
+}
+
+.coupon-exchange-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    height: 7vh;
+    width: 98%;
+    margin-left: 1%;
+    font-size: 0.9em;
+    padding: 0 20rpx;
+    box-sizing: border-box;
+    margin-top: 1vh;
+}
+
+.coupon-icon-text-container{
+    display: flex;
+    align-items: center;
+}
+
+.coupon-text-container{
+    padding-bottom: 4rpx;
+    border-bottom: 2px solid #9cc377;
+}
+
+.coupon-icon-container .t-icon-youhuiquan{
+    margin-right: 20rpx;
+}
+
+.commodity-show-container{
+    padding: 15rpx;
+    border-radius: 10rpx;
+}

@@ -1,0 +1,86 @@
+<view class="commodity-detail-show-container">
+    <view class="commodity-detail-commodity-id-status-container">
+        <view class="commodity-detail-commodity-id-container">
+            <text class="commodity-detail-commodity-id-prefix">商品编号 </text>
+            <text class="commodity-detail-commodity-id-text">{{commodity.commodityId}}</text>
+        </view>
+        <view class="commodity-detail-commodity-status-container">
+            <text class="commodity-detail-commodity-status-text">{{commodity.status}}</text>
+        </view>
+    </view>
+    <view class="commodity-detail-commodity-info-container">
+        <view class="commodity-detail-commodity-info-picture-name-container">
+            <view class="commodity-detail-commodity-info-picture-container">
+                <image class="commodity-picture" src="{{commodity.pictureUrl[0]}}" mode="aspectFill"></image>
+            </view>
+            <view class="commodity-detail-commodity-info-name-container">
+                <text>{{commodity.commodityName}}</text>
+            </view>
+        </view>
+        <view class="commodity-detail-commodity-quantity-container">
+            <text>×{{commodity.amount}}</text>
+        </view>
+    </view>
+    <view  class="commodity-detail-user-info-container">
+        <view class="commodity-detail-user-info-avatar-name-container">
+            <view class="commodity-detail-user-info-avatar-container">
+                <image class="user-avatar" src="{{commodity.userAvatar}}" mode="aspectFill"></image>
+            </view>
+            <view class="commodity-detail-user-info-name-container">
+                <text class="commodity-detail-user-info-name-text">{{commodity.userName}}</text>
+            </view>
+
+        </view>
+        <view class="commodity-detail-buyer-info-prefix-container">
+            <text>持有者</text>
+        </view>
+    </view>
+
+    <view class="commodity-detail-other-commodity-info-container">
+        <view class="commodity-detail-logistics-mode">
+            <text class="commodity-detail-logistics-prefix">物流方式</text>
+            <text><block wx:for="{{commodity.commodityLogistics}}" wx:key="index"> {{index + 1}} {{item}} </block></text>
+        </view>
+        <view class="commodity-detail-address">
+            <text class="commodity-detail-address-prefix">所在社区</text>
+            <text>{{commodity.communityName}}</text>
+        </view>
+        <view class="commodity-detail-category">
+            <text class="commodity-detail-category-prefix">商品分类</text>
+            <text>{{commodity.category}}</text>
+        </view>
+        <view class="commodity-detail-commodity-time">
+            <text class="commodity-detail-commodity-time-prefix">发布时间</text>
+            <text>{{commodity.publishTime}}</text>
+        </view>
+        <block wx:if="{{commodity.drainagePlan}}">
+            <view class="commodity-detail-drainagePlan">
+                <text class="commodity-detail-drainagePlan-prefix">是否加入引流计划</text>
+                <text>{{commodity.drainagePlan}}</text>
+            </view>
+            <view class="commodity-detail-trade-price">
+                <text class="commodity-detail-trade-price-prefix">单价</text>
+                <text>￥{{commodity.price}}</text>
+            </view>
+        </block>
+
+        <block wx:if="{{!commodity.drainagePlan}}">
+            <view class="commodity-detail-appointmentTime">
+                <text class="commodity-detail-appointmentTime-prefix">上门取货时间</text>
+                <text>{{commodity.appointTime}}</text>
+            </view>
+            <view class="commodity-detail-trade-place">
+                <text class="commodity-detail-trade-place-prefix">取货地址</text>
+                <text>{{commodity.userAddress}}</text>
+            </view>
+        </block>
+        <view wx:if="{{message}}" class="message-container">
+            <view class="message-prefix-container">
+                <text class="message-prefix">通知</text>
+            </view>
+            <view class="message-text-container">
+                <text>{{message}}</text>
+            </view>
+        </view>
+    </view>
+</view>

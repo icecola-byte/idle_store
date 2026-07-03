@@ -1,0 +1,50 @@
+<view class="commodity-browse-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+            bind:click-left="onBack"
+            border="{{true}}"
+            fixed="{{true}}"
+            placeholder="{{true}}">
+
+            <view class="navigator-bar-picker-container" bind:tap="toggleDropdownMenu" slot="title">
+                <view class="navigator-bar-title">{{navigatorTitle}}</view>
+                <view class="navigator-bar-icon">
+                    <view class="t-icon t-icon-xiangxiazhankai"></view>
+                </view>
+            </view>
+            
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <view class="mask" style="top:{{maskTop}}px;" wx:if="{{ showDropdown }}">
+        <view class="dropdown-menu-container">
+            <dropdown-menu class="dropdown-menu" 
+                checkedIndex="{{primaryCheckedIndex}}" 
+                wx:if="{{ showDropdown }}" 
+                option="{{categoryPrimaryOptions}}"
+                bind:indexChange="primaryIndexChange">
+            </dropdown-menu>
+        </view>
+    </view>
+    <scroll-view scroll-x enable-flex class="second-category-container">
+        <block wx:for="{{categorySecondOptions}}" wx:key="index" >
+            <view class="second-category-item{{secondCheckedIndex == index ? '-checked' : ''}}"
+                    data-id="{{item.value}}"
+                    data-index="{{index}}"
+                    bind:tap="secondCategoryChange">
+                {{item.text}}
+            </view>
+        </block>
+    </scroll-view>
+    <view class="commodity-show-container" wx:if="{{commodityInfoShow.length != 0}}">
+        <commodity-browse-show info="{{commodityInfoShow}}"></commodity-browse-show>
+    </view>
+    <van-empty wx:if="{{commodityInfoShow.length == 0}}"
+        class="custom-image custom-empty-style"
+        image="https://img.yzcdn.cn/vant/custom-empty-image.png"
+        description="空空如也~"
+    />
+    <van-toast id="van-toast"/>
+    
+</view>

@@ -1,0 +1,92 @@
+<view class="select-commodity-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+                title="商品选择"
+                bind:click-left="onBack"
+                border="{{false}}"
+                fixed="{{true}}"
+                placeholder="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+        </van-nav-bar>
+    </view>
+    <view class="page-content-container">
+        <van-divider contentPosition="left">买家信息</van-divider>
+        <view class="buyer-info-container">
+            <view class="buyer-avatar-name-container">
+                <view class="buyer-avatar-container">
+                    <image class="buyer-avatar" src="{{init.orderInfo.buyerInfo.avatar}}" mode="aspectFill"></image>
+                </view>
+                <view class="buyer-name-container">
+                    <text>{{init.orderInfo.buyerInfo.name}}</text>
+                </view>
+            </view>
+            <view class="buyer-call-message-container">
+                <view class="t-icon t-icon-a-bianzu53" data-id="{{init.orderInfo.buyerInfo.userId}}" bind:tap="gotoChatPage"></view>
+            </view>
+        </view>
+        <van-divider contentPosition="left">商品信息</van-divider>
+        <view class="order-detail-commodity-info-container">
+            <view class="order-detail-commodity-info-picture-name-container">
+                <view class="order-detail-commodity-info-picture-container">
+                    <image class="commodity-picture" src="{{init.orderInfo.commodityInfo.picture}}" mode="aspectFill"></image>
+                </view>
+                <view class="order-detail-commodity-info-name-container">
+                    <text>{{init.orderInfo.commodityInfo.name}}</text>
+                </view>
+            </view>
+            <view class="order-detail-order-quantity-container">
+                <text>×{{init.orderInfo.orderQuantity}}</text>
+            </view>
+        </view>
+        <van-divider contentPosition="left">选项</van-divider>
+        <radio-group bind:change="selectChoiceChange">
+            <block wx:for="{{cache.choices}}" wx:for-item="choice" wx:for-index="choiceIndex" wx:key="choiceIndex">
+                <view class="choice-container">
+                    <view class="choice-title-container">
+                        <text>组合{{choiceIndex + 1}}</text>
+                        <radio class="radio" color="#a3c373" value="{{choiceIndex}}" checked="{{choiceIndex === result.selectedIndex}}"></radio>
+                    </view>
+                    <block wx:for="{{choice}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+                        <view class="choice-commodity-container">
+                            <view class="choice-commodity-picture-name-container">
+                                <view class="choice-commodity-picture-container">
+                                    <image class="choice-commodity-picture" src="{{item.pictureUrl[0]}}" mode="aspectFill"></image>
+                                </view>
+                                <view class="choice-commodity-name-container">
+                                    <text>{{item.commodityName}}</text>
+                                </view>
+                            </view>
+                            <view class="choice-commodity-number-eye-container">
+                                <view bind:tap="openCommodityDetailPopUp" data-item="{{item}}" class="choice-commodity-eye-container">
+                                    <van-icon class="eye-icon" name="eye-o" size="20px"/>
+                                </view>
+                                <view class="choice-commodity-number-container">
+                                    <text>×{{item.buyNumber}}</text>
+                                </view>
+                            </view>
+                        </view>
+                    </block>
+                </view>
+            </block>
+        </radio-group>
+        <view class="btn-container">
+            <van-button type="default"
+                        color="#edfff0"
+                        bind:tap="takeOrder"
+                        size="large">
+                <text style="color: #a3c373;">确认</text>
+            </van-button>
+        </view>
+        <van-popup show="{{ init.showCommodityDetailPopUp }}"
+                   bind:close="closeCommodityDetailPopUp"
+                   round="{{true}}"
+                   closeable>
+            <view class="commodity-detail-container">
+                <commodity-detail-show commodity="{{cache.commodityInfo}}"></commodity-detail-show>
+            </view>
+        </van-popup>
+    </view>
+    <van-toast id="van-toast"/>
+    <van-dialog id="van-dialog" />
+</view>

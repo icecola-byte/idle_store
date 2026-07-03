@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.lh</groupId>
+        <artifactId>idle-store-framework</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>lh-spring-boot-starter-logging</artifactId>
+
+    <dependencies>
+        <!-- Spring Boot 标准日志实现：SLF4J + Logback -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+        <!-- prod 输出 JSON 日志需要 -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+        </dependency>
+    </dependencies>
+</project>

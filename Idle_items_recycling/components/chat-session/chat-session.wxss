@@ -1,0 +1,92 @@
+.chat-session-item-container{
+    display: flex;
+    height: 12vh;
+    align-items: stretch;
+    margin: 20rpx;
+}
+
+.avatar-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar-container .avatar{
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 10rpx;
+    margin-right: 20rpx;
+}
+
+.avatar-image-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.unread-badge{
+    position: absolute;
+    min-width: 30rpx;
+    height: 30rpx;
+    padding: 0 6rpx;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ee3f4d;
+    color: #ffffff;
+    border: 2rpx solid #ffffff;
+    border-radius: 16rpx;
+    font-size: 20rpx;
+    right: 8rpx;
+    top: -8rpx;
+}
+
+.main-content-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20rpx 0;
+    border-bottom: 1rpx solid #f5f5f5;
+}
+
+.title-content-container{
+    width: 450rpx;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.time-container{
+    display: flex;
+    height: 80%;
+    align-items: self-start;
+    margin-right: 20rpx;
+}
+
+.time-text{
+    color: #b5b5b5;
+    font-size: 0.8em;
+}
+
+.title-text{
+    color: #333333;
+}
+
+.title-container{
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+
+.content-text{
+    color: #b5b5b5;
+    font-size: 0.8em;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+

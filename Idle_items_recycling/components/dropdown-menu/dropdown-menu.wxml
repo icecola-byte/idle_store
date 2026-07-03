@@ -1,0 +1,14 @@
+<view class="dropdown-menu-container">
+  
+  <view class="dropdown-menu-content">
+    <!-- 下拉菜单的内容 -->
+    <block wx:for="{{option}}" wx:key="value">
+      <van-transition show="{{ true }}" name="fade-down" duration="{{(index + 1) * 100}}">
+        <view class="dropdown-menu-item"  data-value="{{item.value}}" bind:tap="handleItemClick">
+          <view class="dropdown-menu-item-text text{{checkedIndex == index ? 'Checked': 'Unchecked'}}">{{ item.text }}</view>
+          <view wx:if="{{checkedIndex == index}}" class="dropdown-menu-item-icon"><view class="t-icon t-icon-duihao"></view></view>
+        </view>
+      </van-transition>
+    </block> 
+  </view>
+</view>

@@ -1,0 +1,26 @@
+.message-page-container {
+    min-height: 100vh;
+    background: #ffffff;
+}
+
+.van-nav-bar__title {
+    color: #ffffff !important;
+}
+
+.van-nav-bar {
+    background-color: #5f8f55 !important;
+}
+
+.chat-session-item:active {
+    background-color: #f5f7f4;
+}
+
+.page-state {
+    min-height: 55vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24rpx;
+    color: #777777;
+}

@@ -1,0 +1,51 @@
+.van-nav-bar__title{
+    color: #a3c373 !important;
+}
+.van-nav-bar{
+    background-image: linear-gradient(-225deg, #a1ffce 0%, #faffd1 100%) !important;
+}
+
+.t-icon-wenti{
+    position: fixed;
+    right: 25rpx;
+    top: 11vh;
+    width: 28px;
+    height: 28px;
+    z-index: 100;
+}
+
+.form-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60rpx 0;
+}
+
+.value-class{
+    flex: none !important;
+}
+
+.t-icon-wentiqishouwenti{
+    margin-left: 15rpx;
+}
+
+/* 控制 textarea 多行输出 */
+.remark-input .van-field__control--textarea{
+    min-height: 100rpx !important;
+}
+
+.form-btn-container-father{
+    display: flex;
+    justify-content: center;
+}
+
+.form-btn-container{
+    margin-top: 3vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 580rpx;
+}
+
+
+

@@ -1,0 +1,27 @@
+<view class="message-page-container">
+    <van-nav-bar
+        title="消息中心"
+        border="{{true}}"
+        fixed="{{true}}"
+        placeholder="{{true}}" />
+
+    <view wx:if="{{loading && chatSessionInfo.length === 0}}" class="page-state">
+        <van-loading size="24px">加载中</van-loading>
+    </view>
+    <view wx:elif="{{loadError && chatSessionInfo.length === 0}}" class="page-state">
+        <text>{{loadError}}</text>
+        <van-button size="small" bind:tap="loadSessions">重试</van-button>
+    </view>
+    <van-empty wx:elif="{{chatSessionInfo.length === 0}}" description="暂无消息" />
+
+    <view wx:else class="chat-session-container">
+        <block wx:for="{{chatSessionInfo}}" wx:key="sessionId">
+            <view
+                data-id="{{item.sessionId}}"
+                bind:tap="onClickSessionItem"
+                class="chat-session-item">
+                <chat-session info="{{item}}" />
+            </view>
+        </block>
+    </view>
+</view>

@@ -1,0 +1,105 @@
+<view class="order-detail-show-container">
+    <view class="order-detail-order-id-status-container">
+        <view class="order-detail-order-id-container">
+            <text class="order-detail-order-id-prefix">订单编号 </text>
+            <text class="order-detail-order-id-text">{{order.orderId}}</text>
+        </view>
+        <view class="order-detail-order-status-container">
+            <text class="order-detail-order-status-text">{{order.status.statusName}}</text>
+        </view>
+    </view>
+    <view class="order-detail-commodity-info-container">
+        <view class="order-detail-commodity-info-picture-name-container">
+            <view class="order-detail-commodity-info-picture-container">
+                <image class="commodity-picture" src="{{order.commodityInfo.picture}}" mode="aspectFill"></image>
+            </view>
+            <view class="order-detail-commodity-info-name-container">
+                <text>{{order.commodityInfo.name}}</text>
+            </view>
+        </view>
+        <view class="order-detail-order-quantity-container">
+            <text>×{{order.orderQuantity}}</text>
+        </view>
+    </view>
+    <view wx:if="{{order.buyerInfo && !order.buy}}" class="order-detail-buyer-info-container">
+        <view class="order-detail-buyer-info-avatar-name-container">
+            <view class="order-detail-buyer-info-avatar-container">
+                <image class="user-avatar" src="{{order.buyerInfo.avatar}}" mode="aspectFill"></image>
+            </view>
+            <view class="order-detail-buyer-info-name-container">
+                <text class="order-detail-buyer-info-name-text">{{order.buyerInfo.name}}</text>
+            </view>
+
+        </view>
+        <view class="order-detail-buyer-info-prefix-container">
+            <text>买家</text>
+            <view wx:if="{{order.buyerInfo.name !== '管理员'}}" data-id="{{order.buyerInfo.userId}}" bind:tap="gotoChatPage" class="t-icon t-icon-a-bianzu53"></view>
+        </view>
+    </view>
+
+    <view wx:if="{{order.buy}}" class="order-detail-seller-info-container">
+        <view class="order-detail-seller-info-avatar-name-container">
+            <view class="order-detail-seller-info-avatar-container">
+                <image class="user-avatar" src="{{order.sellerInfo.avatar}}" mode="aspectFill"></image>
+            </view>
+            <view class="order-detail-seller-info-name-container">
+                <text class="order-detail-seller-info-name-text">{{order.sellerInfo.name}}</text>
+            </view>
+        </view>
+        <view class="order-detail-seller-info-prefix-container">
+            <text>卖家</text>
+            <view class="t-icon t-icon-a-bianzu53" data-id="{{order.sellerInfo.userId}}" bind:tap="gotoChatPage"></view>
+        </view>
+    </view>
+
+    <view class="order-detail-order-info-container">
+        <view class="order-detail-logistics-mode">
+            <text class="order-detail-logistics-prefix">物流方式</text>
+            <text>{{order.logisticsMode}}</text>
+        </view>
+        <view wx:if="{{choices.length}}" class="order-detail-choice-container">
+            <text class="order-detail-choice-prefix">用户选项</text>
+            <block wx:for="{{choices}}" wx:for-item="item" wx:for-index="index" wx:key="index">
+                <view class="choice-commodity-container">
+                    <view class="choice-commodity-picture-name-container">
+                        <view class="choice-commodity-picture-container">
+                            <image class="choice-commodity-picture" src="{{item.pictureUrl[0]}}" mode="aspectFill"></image>
+                        </view>
+                        <view class="choice-commodity-name-container">
+                            <text>{{item.commodityName}}</text>
+                        </view>
+                    </view>
+                    <view class="choice-commodity-number-eye-container">
+                        <view class="choice-commodity-number-container">
+                            <text>×{{item.buyNumber}}</text>
+                        </view>
+                    </view>
+                </view>
+            </block>
+        </view>
+        <view class="order-detail-address">
+            <text class="order-detail-address-prefix">交易地点</text>
+            <text>{{order.tradingPlace}}</text>
+        </view>
+        <view class="order-detail-coupon">
+            <text class="order-detail-coupon-prefix">优惠卷</text>
+            <text>{{order.coupon}}</text>
+        </view>
+        <view class="order-detail-order-time">
+            <text class="order-detail-order-time-prefix">下单时间</text>
+            <text>{{order.orderTime}}</text>
+        </view>
+        <view class="order-detail-trade-price">
+            <text class="order-detail-trade-price-prefix">成交金额</text>
+            <text>￥{{order.price}}</text>
+        </view>
+        <view wx:if="{{message}}" class="message-container">
+            <view class="message-prefix-container">
+                <text class="message-prefix">通知</text>
+            </view>
+            <view class="message-text-container">
+                <text>{{message}}</text>
+            </view>
+        </view>
+    </view>
+</view>

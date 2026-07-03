@@ -1,0 +1,31 @@
+<view class="history-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+                title="浏览记录"
+                bind:click-left="onBack"
+                border="{{true}}">
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+        </van-nav-bar>
+    </view>
+    <view class="content-container">
+        <block wx:for="{{init.commodityInfoShow}}" wx:for-item="commodityItem" wx:key="commodityId">
+            <view class="time-show" wx:if="{{init.timeShow[index].show}}">
+                <view class="t-icon t-icon-shijian"></view>
+                <span>{{init.timeShow[index].time}}</span>
+            </view>
+            <commodity-show
+                    commodityInfo="{{commodityItem}}"
+                    tag="{{true}}"
+                    statusShow="{{true}}"
+                    message="{{init.isClickToDetail[index] ? '' : '商品已下架'}}"
+                    catch:tap="gotoCommodityShop"
+                    data-index="{{index}}"
+                    eyeShow="{{false}}">
+
+            </commodity-show>
+
+        </block>
+    </view>
+    <van-dialog id="van-dialog" />
+    <van-toast id="van-toast"/>
+</view>

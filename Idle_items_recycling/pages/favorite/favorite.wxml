@@ -1,0 +1,35 @@
+<view class="favorite-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+            title="我的收藏"
+            bind:click-left="onBack"
+            border="{{true}}"
+            fixed="{{true}}"
+            placeholder="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <view class="content-container">
+        <block wx:for="{{commodityInfoShow}}" wx:for-item="commodityItem" wx:key="commodityId">
+
+                <commodity-show
+                        commodityInfo="{{commodityItem}}"
+                        tag="{{true}}"
+                        statusShow="{{true}}"
+                        message="{{isClickToDetail[index] ? '' : '商品已下架'}}"
+                        catch:tap="gotoCommodityShop"
+                        data-index="{{index}}"
+                        eyeShow="{{false}}">
+                    <view data-id="{{commodityItem.commodityId}}" data-index="{{index}}" class="operation-cancel-favorite" slot="operation-cancel-favorite" catch:tap="cancelFavorite">
+                        <view class="t-icon t-icon-shoucang1" slot="icon"></view><text>取消收藏</text>
+                    </view>
+                </commodity-show>
+
+        </block>
+    </view>
+    <van-dialog id="van-dialog" />
+    <van-notify id="van-notify" />
+    <van-toast id="van-toast"/>
+</view>

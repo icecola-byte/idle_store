@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.lh</groupId>
+        <artifactId>idle-store-framework</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>idle-store-cache-contract</artifactId>
+    <packaging>jar</packaging>
+
+    <name>${project.artifactId}</name>
+    <description>跨服务共享的缓存 Key 与缓存数据契约</description>
+</project>

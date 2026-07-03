@@ -1,0 +1,68 @@
+<view class="activity-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+                class="navigator-bar"
+                bind:click-left="onBack"
+                border="{{true}}"
+                title="社区活动"
+                fixed="{{true}}"
+                placeholder="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <view class="content-container">
+        <van-collapse value="{{ cache.activeNames }}" bind:change="activeChange">
+            <block wx:for="{{init.activityData}}" wx:key="index">
+                <view class="a-activity-container">
+                    <van-collapse-item name="{{item.activity.activityId}}">
+                        <view slot="title">
+                            <view class="activity-info">
+                                <view class="start-time"><text>开始时间</text><text>{{item.activity.startTime}}</text></view>
+                                <view class="end-time"><text>结束时间</text><text>{{item.activity.endTime}}</text></view>
+                                <view class="participant-number"><text>参与人员数量</text><text>{{item.activity.participantNumber}}</text></view>
+                                <view class="commodity-number"><text>商品数量</text><text>{{item.activity.commodityNumber}}</text></view>
+                                <view class="trading-place"><text>活动地点</text><text>{{item.activity.tradingPlace}}</text></view>
+                            </view>
+                        </view>
+                        <view class="value-container" slot="value">
+                            <view class="activity-status">
+                                状态: {{item.status}}
+                            </view>
+                            <view class="operation-container">
+                                <van-tag wx:if="{{item.status !== '已结束'}}" size="large" color="#f0f9eb" text-color="#67c23a" data-index="{{index}}" catch:tap="participateActivity">点击参加</van-tag>
+                                <van-tag wx:if="{{item.userIsParticipate && item.status === '已结束'}}" class="result-feedback" size="large" color="#ecf5ff" text-color="#409eff" data-index="{{index}}" catch:tap="feedbackActivity">结果反馈</van-tag>
+                              
+                            </view>
+                        </view>
+                        <view class="commodity-list-show-container">
+                            <block wx:for="{{item.commodityList}}" wx:for-index="idx" wx:for-item="commodity" wx:key="commodityId">
+                                <view class="commodity-item">
+                                    <view class="name-isLove-container">
+                                        <view class="commodity-name-container">
+                                            <text>{{commodity.commodityName}}</text>
+                                        </view>
+                                        <view class="isLove-container">
+                                            <van-tag wx:if="{{item.isLove[idx]}}" color="#ffe1e1" text-color="#ad0000">我的收藏</van-tag>
+                                        </view>
+                                    </view>
+                                    <view class="picture-amount-container">
+                                        <view class="picture-container">
+                                            <image class="commodity-picture" src="{{commodity.pictureUrl}}" mode="aspectFill"></image>
+                                        </view>
+                                        <view class="amount-container">
+                                            <text>×{{commodity.amount}}</text>
+                                        </view>
+                                    </view>
+                                </view>
+                            </block>
+                        </view>
+                    </van-collapse-item>
+                </view>
+
+            </block>
+        </van-collapse>
+    </view>
+    <van-toast id="van-toast"/>
+</view>

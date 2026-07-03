@@ -1,0 +1,7 @@
+{
+    "usingComponents": {
+        "dropdown-menu": "/components/dropdown-menu/dropdown-menu",
+        "commodity-browse-show": "/components/commodity-browse-show/commodity-browse-show"
+    },
+    "onReachBottomDistance": 50
+}

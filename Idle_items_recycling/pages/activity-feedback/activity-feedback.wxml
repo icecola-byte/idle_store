@@ -1,0 +1,61 @@
+<view class="activity-participate-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+                class="navigator-bar"
+                bind:click-left="onBack"
+                border="{{true}}"
+                title="结果反馈"
+                fixed="{{true}}"
+                placeholder="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <view class="tips-container" wx:if="{{!init.completeFeedback}}">
+        <van-notice-bar
+                color="#1989fa"
+                background="#ecf9ff"
+                left-icon="info-o"
+                text="请填写已售出数量 ! 请确认无误后再提交哦~"
+        />
+    </view>
+    <view class="commodity-select-container">
+        <block wx:for="{{init.selectCommodityData}}" wx:key="commodityId">
+            <view class="commodity-select-card">
+                <view class="commodity-name-container">
+                    <view class="commodity-name">
+                        <text>{{item.name}}</text>
+                    </view>
+                </view>
+                <view class="picture-amount-container">
+                    <view class="picture-container">
+                        <image class="commodity-picture" src="{{item.pictureUrl}}" mode="aspectFill"></image>
+                    </view>
+                    <view class="amount-container">
+                        <view class="remain-container">
+                            <text>展出数量 ×{{item.number}}</text>
+                        </view>
+                        <view class="select-number-container">
+                            <text class="sold-out-text">售出数量</text><text wx:if="{{init.completeFeedback}}"> ×{{item.soldOutNumber}}</text>
+                            <van-stepper wx:if="{{!init.completeFeedback}}" min="{{0}}" max="{{item.number}}"
+                                         value="{{result.putData[item.commodityId]}}"
+                                         input-width="24px"
+                                         button-size="24px"
+                                         bind:change="onNumberChange"
+                                         data-commodityId="{{item.commodityId}}"/>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </block>
+        <view class="submit-button-container" wx:if="{{!init.completeFeedback}}">
+            <van-button type="default"
+                        color="#edfff0"
+                        bind:tap="updateActivityCommoditySoldOutNumber">
+                <text style="color: #a3c373;">确认</text>
+            </van-button>
+        </view>
+    </view>
+    <van-dialog id="van-dialog" />
+</view>

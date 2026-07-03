@@ -1,0 +1,110 @@
+.van-nav-bar__title{
+    color: #a3c373 !important;
+}
+.van-nav-bar{
+    background-image: linear-gradient(-225deg, #a1ffce 0%, #faffd1 100%) !important;
+}
+
+
+/* 我的仓库样式 */
+.user-coupon-show-container{
+    display: flex;
+    flex-direction: column;
+    margin-top: 4vh;
+    padding: 20rpx;
+    width: 750rpx;
+    box-sizing: border-box;
+}
+
+.user-coupon-item-container{
+    display: flex;
+    align-items: center;
+    height: 10vh;
+    margin-bottom: 20rpx;
+    border: 1rpx solid #efefef;
+    box-shadow: 1px 1px 15px #efefefef;
+}
+
+.user-coupon-item-icon{
+    justify-self: flex-start;
+    margin-left: 20rpx;
+}
+
+.user-coupon-item-icon .t-icon{
+    width: 48px;
+    height: 48px;
+}
+
+.user-coupon-item-text{
+    justify-self: flex-start;
+    margin-left: 40rpx;
+    font-size: 0.95em;
+    color: #333333;
+}
+
+.user-coupon-item-number-container{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 30rpx;
+    flex-grow: 1;
+    line-height: 0;
+    color: #8b9a9f;
+}
+
+.user-coupon-item-number-prefix{
+    font-size: 0.7rem;
+    
+}
+
+.user-coupon-item-number-text{
+    font-size: 1.2em;
+}
+
+
+/* 兑换优惠卷内容样式 */
+.coupon-category-container{
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10vh;
+    padding: 10rpx;
+    box-sizing: border-box;
+}
+
+.balance-container{
+    position: absolute;
+    top: -6vh;
+    left: 20rpx;
+    display: flex;
+    align-items: center;
+}
+
+.t-icon-jinbi{
+    margin-right: 10rpx;
+}
+
+.coupon-category-item-container{
+    width: 232rpx;
+    height: 240rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1rpx solid #efefef;
+    box-sizing: border-box;
+    margin-top: 8rpx;
+    margin-left: 8rpx;
+    box-shadow: 1px 1px 15px #efefef;
+    border-radius: 10rpx;
+    font-size: 0.9em;
+    color: #333333;
+}
+
+.t-icon-youhuiquan-red, .t-icon-youhuiquan-purple, .t-icon-youhuiquan-blue, .t-icon-youhuiquan-brown {
+    width: 32px;
+    height: 32px;
+}
+
+.coupon-category-item-text{
+    margin-bottom: 10rpx;
+}

@@ -1,0 +1,86 @@
+<view class="activity-participate-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+                class="navigator-bar"
+                bind:click-left="onBack"
+                border="{{true}}"
+                title="商品选择"
+                fixed="{{true}}"
+                placeholder="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <view class="tips-container">
+        <van-notice-bar
+                color="#1989fa"
+                background="#ecf9ff"
+                left-icon="info-o"
+                text="参加活动的商品需要携带至线下展出哦~"
+        />
+    </view>
+    <view class="commodity-select-container">
+        <van-checkbox-group wx:if="{{!init.participate}}" value="{{cache.checkedItemId}}" bindchange="checkboxChange">
+            <block wx:for="{{init.userCommodityData}}" wx:key="commodityId">
+                <view class="commodity-select-card">
+                    <view class="commodity-name-container">
+                        <view class="commodity-name">
+                            <text>{{item.name}}</text>
+                        </view>
+                        <view class="checkbox-item-container">
+                            <van-checkbox class="checkbox-item" name="{{item.commodityId}}"
+                                          checked-color="#a3c373"/>
+                        </view>
+                    </view>
+                    <view class="picture-amount-container">
+                        <view class="picture-container">
+                            <image class="commodity-picture" src="{{item.pictureUrl}}" mode="aspectFill"></image>
+                        </view>
+                        <view class="amount-container">
+                            <view class="remain-container">
+                                <text>剩余数量 ×{{item.amount - item.soldOutNumber}}</text>
+                            </view>
+                            <view class="select-number-container" wx:if="{{result.selectCommodityData[item.commodityId].selected}}">
+                                <van-stepper min="1" max="{{item.amount - item.soldOutNumber}}"
+                                             value="{{result.selectCommodityData[item.commodityId].number}}"
+                                     input-width="24px"
+                                     button-size="24px"
+                                     bind:change="onNumberChange"
+                                     data-commodityId="{{item.commodityId}}"/>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </block>
+        </van-checkbox-group>
+        <view class="submit-button-container" wx:if="{{!init.participate}}">
+            <van-button type="default"
+                        color="#edfff0"
+                        bind:tap="participateActivity">
+                <text style="color: #a3c373;">确认</text>
+            </van-button>
+        </view>
+        <view class="user-have-select-commodity-show">
+            <block wx:for="{{init.userHaveSelectCommodityData}}" wx:for-index="{{idx}}" wx:for-item="commodity" wx:key="commodityId">
+                <view class="commodity-item">
+                    <view class="name-isLove-container">
+                        <view class="commodity-name-container">
+                            <text>{{commodity.name}}</text>
+                        </view>
+                    </view>
+                    <view class="picture-amount-container">
+                        <view class="picture-container">
+                            <image class="commodity-picture" src="{{commodity.pictureUrl}}" mode="aspectFill"></image>
+                        </view>
+                        <view class="amount-container">
+                            <text>×{{commodity.number}}</text>
+                        </view>
+                    </view>
+                </view>
+            </block>
+        </view>
+    </view>
+    <van-dialog id="van-dialog" />
+    <van-toast id="van-toast"/>
+</view>

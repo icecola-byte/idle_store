@@ -1,0 +1,32 @@
+/*
+    手机号输入弹出框的样式
+*/
+.popup-input-phone-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+.popup-input-phone-container .input-phone-warn-text{
+    padding: 5% 0;
+}
+
+.input-phone-form-container .input-phone-form{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    
+}
+
+.input-phone-form{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 35rpx;
+}
+
+.input-phone-form van-field{
+    display: inline-block;
+}

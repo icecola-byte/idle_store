@@ -1,0 +1,40 @@
+<scroll-view type="custom" class="commodity-browse-show-component-container">
+    <grid-view type="masonry" main-axis-gap="{{10}}" cross-axis-gap="{{10}}">
+        <view wx:for="{{infoFormat}}" wx:for-item="i" wx:key="commodityId" class="commodity-info-container" data-commodityId="{{i.commodityId}}" bind:tap="gotoCommodityShop">
+    <van-transition name="fade" duration="{{1000}}">
+            <view class="commodity-image-container">
+                    <image src="{{i.formatInfo.imageSrc}}" alt="商品图片" mode="widthFix"/>
+            </view>
+            <view class="commodity-name-container">
+                <text>{{i.name}}</text>
+            </view>
+            <view class="commodity-tags-price-amount-container">
+                <view class="commodity-tags-container" wx:if="{{i.formatInfo.tags.length !== 0 || i.soldOutNumber > 0}}">
+                    <view class="commodity-tags-container">
+                        <block wx:for="{{i.formatInfo.tags}}" wx:key="index">
+                            <text class="commodity-tags-show tags-color{{i.formatInfo.tagsColor[index]}}">{{item}}</text>
+                        </block>
+                    </view>
+                    <view class="sold-out-number-container">
+                        <text class="sold-out-number-text" wx:if="{{i.soldOutNumber > 0}}">{{i.soldOutNumber}}人购买</text>
+                    </view>
+                </view>
+                <view class="commodity-price-amount-container">
+                    <view class="commodity-price-container">
+                        <view class="content-price-text">
+                            <text class="content-price-text-icon">￥</text>
+                            <text class="content-price-text-integer">{{ i.formatInfo.price.integer }}</text>
+                            <text class="content-price-text-decimal">{{ i.formatInfo.price.decimal }}</text>
+                        </view>
+                    </view>
+                    <view class="commodity-amount-container">
+                        <text>剩余</text>
+                        <text>{{i.amount - i.soldOutNumber}}</text>
+                        <text>件</text>
+                    </view>
+                </view>
+            </view>
+        </van-transition>
+        </view>
+    </grid-view>
+</scroll-view>

@@ -1,0 +1,92 @@
+<view class="commodity-shop-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+            bind:click-left="onBack"
+            border="{{true}}"
+            title="商品详情"
+            fixed="{{true}}"
+            placeholder="{{true}}">
+            
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <scroll-view scroll-y enable-flex class="commodity-detail-info-container" style="height: {{commodityInfoViewHeight}}px;">
+        <view class="commodity-picture-swiper-container">
+            <swiper calss="swiper-container" 
+                indicator-dots indicator-color="white" 
+                indicator-active-color="gray" 
+                autoplay 
+                interval="5000" 
+                circular
+                easing-function="easeInOutCubic" >
+                <block wx:for="{{swiperItem}}" wx:key="index">
+                    <swiper-item class="swiper-item-image-container" item-id="{{index}}">
+                        <image class="swiper-item-image" src="{{item}}" mode="aspectFill" lazy-load="false">
+                            
+                        </image>
+                    </swiper-item>
+                </block>
+            </swiper>
+        </view>
+
+        <view class="commodity-text-info-container">
+            <view class="commodity-name-container">
+                <text>{{commodityInfo.name}}</text>
+            </view>
+            <view class="commodity-tags-container">
+                <block wx:for="{{commodityInfo.formatInfo.tags}}" wx:key="index">
+                    <view class="tag-item-container">
+                        <text class="tags-item tags-color{{commodityInfo.formatInfo.tagsColor[index]}}">{{item}}</text>
+                    </view>
+                </block>
+            </view>
+            <view class="commodity-favorite-price-container">
+                <view class="commodity-price-container">
+                    <text class="price-prefix-text">定价 </text> 
+                    <text class="price-icon">￥</text> 
+                    <text class="price-text">{{commodityInfo.price}}</text>
+                </view>
+                <view class="commodity-favorite-container"><text class="commodity-favorite-text">{{favoriteNumber}}人收藏</text></view>
+            </view>
+            <view class="commodity-logistics-container">
+                <view class="cmmodity-logistics-text-container">
+                    <text>物流支持</text>
+                    <view class="commodity-logistics-tag-container" wx:for="{{logisticsMode}}" wx:key="index">
+                        <van-tag color="{{logisticsTagsColor[index].backgroundColor}}" text-color="{{logisticsTagsColor[index].color}}">{{item}}</van-tag>
+                    </view>
+                </view>
+                <view class="t-icon t-icon-wentiqishouwenti"></view>
+
+            </view>
+
+        </view>
+        
+        <van-divider contentPosition="left"><view class="t-icon t-icon-weixiao"></view><text> 旧物描述</text></van-divider>
+
+        <view class="commodity-remark-container">
+            <van-field
+                value="{{ commodityInfo.remark == null ? '' : commodityInfo.remark }}"
+                placeholder="商家很赖, 没有留下更多信息了~"
+                type="textarea"
+                border
+                readonly
+                autosize
+            />
+        </view>
+    </scroll-view>
+
+    <view class="goods-action-container">
+        <van-goods-action class="goods-action">
+            <van-goods-action-icon text="商家" bind:click="gotoChatPage" data-merchantId="{{commodityInfo.userId}}">
+                <view class="t-icon t-icon-zaixianlianxi" slot="icon"></view>
+            </van-goods-action-icon>
+            <van-goods-action-icon text="收藏" bind:click="collectCommodity">
+                <view class="t-icon {{isFavorite === true ? 't-icon-shoucang1' : 't-icon-shoucang1-copy'}}" slot="icon"></view>
+            </van-goods-action-icon>
+            <van-goods-action-button text="立即购买" bind:click="gotoCommodityShopOrderPage" />
+        </van-goods-action>
+    </view>
+
+    <van-toast id="van-toast"/>
+</view>

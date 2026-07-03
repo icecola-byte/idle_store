@@ -1,0 +1,78 @@
+.chat-page-container {
+    min-height: 100vh;
+    background-color: #ededed;
+}
+
+.van-nav-bar {
+    background-color: #f7faf5 !important;
+}
+
+.content-container {
+    background-color: #ededed;
+}
+
+.history-loading,
+.history-end {
+    min-height: 56rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999999;
+    font-size: 24rpx;
+}
+
+.operation-container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 80rpx 80rpx;
+    align-items: center;
+    gap: 8rpx;
+    height: 50px;
+    padding: 8rpx 12rpx;
+    box-sizing: border-box;
+    background-color: #f7f7f7;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.input-container {
+    min-width: 0;
+}
+
+.input-component {
+    background-color: #ffffff;
+    border-radius: 8rpx;
+    height: 34px;
+    width: 100%;
+    padding: 0 16rpx;
+    box-sizing: border-box;
+    font-size: 28rpx;
+    color: #333333;
+}
+
+.icon-button {
+    width: 72rpx;
+    height: 72rpx;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #4d574b;
+}
+
+.icon-button::after {
+    border: 0;
+}
+
+.send-button {
+    color: #4f7f49;
+}
+
+.icon-button[disabled] {
+    color: #b8b8b8;
+    background: transparent;
+}

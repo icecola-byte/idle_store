@@ -1,0 +1,107 @@
+.van-nav-bar__title{
+    color: #a3c373 !important;
+}
+.van-nav-bar{
+    background-image: linear-gradient(-225deg, #a1ffce 0%, #faffd1 100%) !important;
+}
+
+.page-content-container{
+    padding: 10rpx;
+    box-sizing: border-box;
+}
+
+.buyer-info-container, .order-detail-commodity-info-container, .choice-commodity-container{
+    display: flex;
+    margin: 0 20rpx;
+    align-items: center;
+    justify-content: space-between;
+    color: #8b9a9f;
+    font-size: 0.9em;
+}
+
+.buyer-avatar-name-container{
+    display: flex;
+    align-items: center;
+}
+
+.buyer-avatar{
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 10rpx;
+}
+
+.buyer-name-container{
+    margin-left: 20rpx;
+}
+
+.choice-container{
+    padding:20rpx 15rpx 40rpx 15rpx;
+    box-sizing: border-box;
+    border-radius: 10rpx;
+    border: 1px solid #efefef;
+    box-shadow: 1px 1px 15px #efefef;
+    margin-bottom: 20rpx;
+}
+
+.choice-title-container{
+    color: #8b9a9f;
+    font-weight: bold;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 修改 radio 大小 */
+.choice-title-container .radio{
+    transform: scale(0.8);
+}
+
+.order-detail-commodity-info-container, .choice-commodity-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.order-detail-commodity-info-picture-name-container, .choice-commodity-picture-name-container{
+    display: flex;
+    align-items: center;
+}
+
+.order-detail-commodity-info-picture-container .commodity-picture, .choice-commodity-picture-container .choice-commodity-picture{
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 10rpx;
+}
+
+.order-detail-commodity-info-name-container, .choice-commodity-name-container{
+    margin-left: 20rpx;
+}
+
+.choice-commodity-container{
+    height: 8vh;
+    margin-top: 30rpx;
+}
+
+.choice-commodity-number-eye-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.commodity-detail-container{
+    width: 700rpx;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 60rpx 0;
+}
+
+.van-button--large {
+    width: 400rpx !important;
+}

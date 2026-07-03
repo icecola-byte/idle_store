@@ -1,0 +1,51 @@
+<view class="message-show-container">
+    <view wx:if="{{message.showTime}}" class="time-show-container">
+        <text>{{message.timeText}}</text>
+    </view>
+
+    <view class="message-row {{message.isOwn ? 'message-row-own' : ''}}">
+        <image
+            class="user-avatar"
+            src="{{message.isOwn ? userAvatar : avatar}}"
+            mode="aspectFill" />
+
+        <view class="message-body">
+            <view wx:if="{{message.recalled}}" class="recalled-message">消息已撤回</view>
+
+            <view
+                wx:elif="{{message.messageType === 1}}"
+                class="text-message {{message.isOwn ? 'text-message-own' : ''}}">
+                <text user-select="{{true}}">{{message.content}}</text>
+            </view>
+
+            <image
+                wx:elif="{{message.messageType === 2}}"
+                class="image-message"
+                src="{{message.content}}"
+                mode="widthFix"
+                bind:tap="previewImage" />
+
+            <view wx:elif="{{message.messageType === 3}}" class="card-message">
+                <view class="card-title">{{message.card.title || '业务消息'}}</view>
+                <view wx:if="{{message.card.description}}" class="card-description">
+                    {{message.card.description}}
+                </view>
+                <view wx:if="{{message.card.businessId}}" class="card-number">
+                    编号 {{message.card.businessId}}
+                </view>
+            </view>
+
+            <view wx:else class="unsupported-message">暂不支持的消息</view>
+
+            <view wx:if="{{message.deliveryStatus === 'SENDING'}}" class="delivery-status">
+                发送中
+            </view>
+            <view
+                wx:elif="{{message.deliveryStatus === 'FAILED'}}"
+                class="delivery-status delivery-failed"
+                bind:tap="retry">
+                发送失败，点击重试
+            </view>
+        </view>
+    </view>
+</view>

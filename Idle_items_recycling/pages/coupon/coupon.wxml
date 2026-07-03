@@ -1,0 +1,69 @@
+<view class="coupon-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+            title="优惠卷"
+            bind:click-left="onBack"
+            border="{{true}}"
+            fixed="{{true}}"
+            placeholder="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <view class="tabs-container">
+        <van-tabs active="{{ active }}"
+            animated
+            swipeable
+            color="#a3c373"
+            bind:change="onTabsChange">
+            <van-tab title="我的仓库">
+                <view class="user-coupon-show-container">
+                    <block wx:for="{{userCouponInfo}}" wx:for-item="iValue" wx:for-index="iKey" wx:key="iKey">
+                        <block wx:for="{{iValue}}" wx:for-item="jValue" wx:for-index="jKey" wx:key="jKey">
+                            <view class="user-coupon-item-container">
+                                <view class="user-coupon-item-icon">
+                                    <view class="t-icon t-icon-youhuiquan-{{userCouponColor[iKey]}}"></view>
+                                </view>
+                                <view class="user-coupon-item-text">
+                                    <text>满{{iKey}}减{{jKey}}</text>
+                                </view>
+                                <view class="user-coupon-item-number-container">
+                                    <text class="user-coupon-item-number-prefix">X</text>
+                                    <text class="user-coupon-item-number-text">{{jValue}}</text>
+                                </view>
+                            </view>
+                        </block>
+                    </block>
+                </view>
+            </van-tab>
+            <van-tab title="兑换优惠卷">
+                <view class="coupon-category-container">
+                    <view class="balance-container">
+                        <view class="t-icon t-icon-jinbi"></view><text>{{balance}}</text>
+                    </view>
+                    <view class="coupon-category-item-container" wx:for="{{couponInfo}}" wx:key="coin">
+                        <view class="coupon-category-item-icon">
+                            <view class="t-icon t-icon-youhuiquan-{{color[index]}}"></view>
+                        </view>
+                        <view class="coupon-category-item-text">
+                            <text>满{{item.total}}减{{item.discount}}</text>
+                        </view>
+                        <view class="coupon-category-item-button">
+                            <van-button round type="primary" 
+                            size="mini"
+                            color="linear-gradient(to right, #4bb0ff, #6149f6)"
+                            bind:click="exchangeCoupon"
+                            data-index="{{index}}">兑换</van-button>
+                        </view>
+                    </view>
+                </view>
+            </van-tab>
+        </van-tabs>
+    </view>
+
+
+    <van-dialog id="van-dialog" />
+    <van-notify id="van-notify" />
+    <van-toast id="van-toast"/>
+</view>

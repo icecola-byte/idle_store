@@ -1,0 +1,76 @@
+.commodity-info-container{
+    background-color: #ffffff;
+    border-radius: 10rpx;
+    box-sizing: border-box;
+    padding-bottom: 16rpx;
+}
+
+.commodity-image-container image{
+    width: 100%;
+    border-top-left-radius: 10rpx;
+    border-top-right-radius: 10rpx;
+    
+}
+
+.commodity-name-container{
+    font-size: 0.95em;
+    color: #333333;
+    font-weight: bold;
+    margin: 10rpx;
+}
+
+.commodity-tags-price-amount-container{
+    margin-left: 10rpx;
+}
+
+.commodity-tags-container{
+    margin: 10rpx 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.commodity-tags-show{
+    padding: 8rpx 12rpx;
+    margin-right: 10rpx;
+    font-size: 0.7em;
+    border-radius: 10rpx;
+}
+
+.tags-color0{
+    background-color: #fdf2cb;
+    color: #f2be00;
+}
+
+.tags-color1{
+    background-color: #edfff0;
+    color: #a3c373;
+}
+
+.commodity-price-amount-container{
+    margin-top: 10rpx;
+}
+
+.content-price-text{
+    color: #f2be00;
+}
+
+.content-price-text-decimal, .content-price-text-icon{
+    font-size: 0.7em;
+}
+
+.content-price-text-icon{
+    margin-right: -4rpx;
+}
+
+.commodity-price-amount-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.commodity-amount-container, .sold-out-number-container{
+    font-size: 0.7em;
+    margin-right: 10rpx;
+    color: #9ba8ad;
+}

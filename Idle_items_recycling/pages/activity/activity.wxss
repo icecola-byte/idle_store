@@ -1,0 +1,73 @@
+.van-nav-bar{
+    background-image: linear-gradient(-225deg, #a1ffce 0%, #faffd1 100%) !important;
+}
+.navigator-bar-title-text{
+    color: #a3c373;
+}
+
+.content-container{
+    padding: 0 10px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+.a-activity-container{
+    padding: 10rpx 0;
+    box-sizing: border-box;
+}
+
+.activity-info{
+    display: flex;
+    flex-direction: column;
+}
+
+.activity-info view{
+    width: 420rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #333333;
+}
+
+.value-container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.operation-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.result-feedback{
+    margin-top: 20rpx;
+}
+
+.commodity-picture{
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 10rpx;
+}
+
+.commodity-item{
+    display: flex;
+    flex-direction: column;
+    padding: 20rpx;
+    border: 1px solid #f5f5f5;
+    box-shadow: 1px 1px 15px #f5f5f5;
+    margin-top: 10rpx;
+    border-radius: 10rpx;
+}
+
+.commodity-item .name-isLove-container, .commodity-item .picture-amount-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.commodity-item .name-isLove-container{
+    margin-bottom: 10rpx;
+}

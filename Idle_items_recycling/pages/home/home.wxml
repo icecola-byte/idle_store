@@ -1,0 +1,65 @@
+<view class="home-container">
+
+    <view class="header-container">
+        <view class="search-and-location-container" style="margin-top: {{searchLocationMarginTop}}; height: {{searchLocationHeight}};">
+            <view class="location-container">
+                <van-icon name="location-o" />
+                <view class="location-text">{{communityLocation}}</view>
+            </view>
+            <view class="search-container">
+                <text>首页</text>
+                <!-- <van-icon name="search" />
+                <input type="text" placeholder="请输入搜索关键字"
+                                placeholder-style="font-size: 0.8em;"
+                                class="search-input"
+                                confirm-type="search"
+                                adjust-position="{{false}}"
+                                bindconfirm="searchOperation"/> -->
+            </view>
+        </view>
+    </view>
+    <view class="classfiy-container">
+        <home-classfiy-bar category="{{categoryOptions}}"></home-classfiy-bar>
+    </view>
+    <view class="other-options-container">
+        <view class="other-options-background"></view>
+        <view class="other-options-content-container">
+            <view class="other-options-on-sale-container" bind:tap="gotoCommodityOtherShow" data-title="火热爆款" data-type="{{0}}">
+                <view class="on-sale-icon-container">
+                    <view class="t-icon t-icon-youhuijuan1"></view>
+                </view>
+                <view class="on-sale-text-container">
+                    <text>火热爆款</text>
+                </view>
+            </view>
+            <view class="other-options-new-product-container" bind:tap="gotoCommodityOtherShow" data-title="新品速递" data-type="{{1}}">
+                <view class="new-product-icon-container">
+                    <view class="t-icon t-icon-shizhong"></view>
+                </view>
+                <view class="new-product-text-container">
+                    <text>新品速递</text>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="coupon-exchange-container" bind:tap="gotoCouponPage">
+        <view class="coupon-icon-text-container">
+            <view class="coupon-icon-container">
+                <view class="t-icon t-icon-youhuiquan"></view>
+            </view>
+            <view class="coupon-text-container">
+                <text>优惠卷兑换</text>
+            </view>
+        </view>
+        <view class="link-icon-container">
+            <van-icon name="arrow" />
+        </view>
+    </view>
+
+    <view class="commodity-show-container">
+        <commodity-browse-show info="{{commodityInfoShow}}"></commodity-browse-show>
+    </view>
+
+    <van-notify id="van-notify" top="20px"/>
+    <van-toast id="van-toast"/>
+</view> 

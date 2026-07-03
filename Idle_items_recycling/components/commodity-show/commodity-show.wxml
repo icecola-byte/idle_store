@@ -1,0 +1,64 @@
+<view class="commodity-container">
+  <view class="header-container">
+    <view class="header-message">
+      <text>{{message}}</text>
+    </view>
+    <view class="header-commodity-status-container">
+      <van-icon wx:if="{{eyeShow}}" class="eye-icon" name="eye-o" size="20px"  data-id="{{commodityInfo.commodityId}}" catchtap="openCommodityDetailPopUp"/>
+      <text>{{commodityInfo.isDelete == 1 ? '' : statusShow ? commodityInfo.status.statusName : ''}}</text>
+    </view>
+
+  </view>
+  <van-popup show="{{ commodityDetailPopUp }}"
+                    bind:close="closeCommodityDetailPopUp"
+                    round="{{true}}"
+                    closeable>
+    <view class="commodity-detail-container">
+      <commodity-detail-show commodity="{{commodityDetailInfo}}"></commodity-detail-show>
+    </view>
+  </van-popup>
+  <view class="content-container">
+    <view class="content-commodity-image">
+      <image class="commodity-image" src="{{commodityInfo.formatInfo.imageSrc}}" alt="商品图片" mode="aspectFill"/>
+    </view>
+    <view class="content-name-tag-container">
+      <view class="content-name">
+        <text>{{commodityInfo.name}}</text>
+      </view>
+      <view class="content-tags" wx:if="{{tag}}">
+        <block wx:for="{{commodityInfo.formatInfo.tags}}" wx:key="index">
+          <text class="content-tags-text tags-color{{commodityInfo.formatInfo.tagsColor[index]}}">{{item}}</text>
+        </block>
+      </view>
+    </view>
+    <view class="content-price-number-container">
+      <view class="content-price-container">
+        <!-- <view class="t-icon t-icon-jine content-price-icon">￥</view> -->
+        <view class="content-price-text">
+          <text class="content-price-text-icon">￥</text>
+          <text class="content-price-text-integer">{{ commodityInfo.formatInfo.price.integer }}</text>
+          <text class="content-price-text-decimal">{{ commodityInfo.formatInfo.price.decimal }}</text>
+        </view>
+      </view>
+      <view class="content-number">
+        <text wx:if="{{!customNumberShow}}" class="content-number-prefix">x</text>
+        <!-- 
+          待审核时: 数量 = 总数
+          在售中: 数量 = 总数 - 销售量
+          已售空: 数量 = 总数
+        -->
+        <text wx:if="{{!customNumberShow}}" class="content-number-text">{{ commodityInfo.status.status == 2 ? commodityInfo.amount - commodityInfo.soldOutNumber : commodityInfo.amount}}</text>
+        <slot wx:else name="number-show"></slot>
+      </view>
+    </view>
+    
+  </view>
+  <view class="operation-container">
+    <view class="operation">
+      <slot name="operation-delete"></slot>
+      <slot name="operation-update"></slot>
+      <slot name="operation-cancel-favorite"></slot>
+      <slot name="operation-look-detail"></slot>
+    </view>
+  </view>
+</view>

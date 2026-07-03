@@ -1,0 +1,108 @@
+.commodity-detail-show-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 650rpx;
+    margin: 40px 0;
+    padding: 20rpx 40rpx 30rpx 40rpx;
+    border: 1px solid #f5f5f5;
+    box-shadow: 1px 1px 15px #f5f5f5;
+    border-radius: 10rpx;
+}
+/* 商品编号、状态 */
+.commodity-detail-commodity-id-status-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: -20rpx;
+    margin-right: -20rpx;
+}
+
+.commodity-detail-commodity-id-container .commodity-detail-commodity-id-prefix{
+    font-weight: bold;
+    color: #333333;
+    font-size: 1.1em;
+}
+
+.commodity-detail-commodity-status-container .commodity-detail-commodity-status-text{
+    color: #8b9a9f;
+    font-size: 0.9em;
+}
+
+/* 商品信息 */
+.commodity-detail-commodity-info-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #8b9a9f;
+    font-size: 0.9em;
+    margin-top: 15rpx;
+}
+
+.commodity-detail-commodity-info-picture-name-container{
+    display: flex;
+    align-items: center;
+}
+
+.commodity-detail-commodity-info-picture-container .commodity-picture{
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 10rpx;
+}
+
+.commodity-detail-commodity-info-name-container{
+    margin-left: 20rpx;
+}
+
+/* 拥有者信息 */
+.commodity-detail-user-info-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 15rpx;
+    font-size: 0.9em;
+    color: #8b9a9f;
+}
+
+.commodity-detail-user-info-avatar-name-container{
+    display: flex;
+    align-items: center;
+}
+
+.commodity-detail-user-info-avatar-container .user-avatar{
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 10rpx;
+}
+
+.commodity-detail-user-info-name-text{
+    margin-left: 20rpx;
+}
+
+/* 商品其余信息 */
+.commodity-detail-other-commodity-info-container{
+    margin-top: 15rpx;
+    font-size: 0.9em;
+    color: #8b9a9f;
+    display: flex;
+    flex-direction: column;
+}
+
+.commodity-detail-logistics-mode, .commodity-detail-address, .commodity-detail-category, .commodity-detail-commodity-time,
+.commodity-detail-drainagePlan, .commodity-detail-trade-price, .commodity-detail-trade-place, .commodity-detail-appointmentTime{
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 12rpx;
+}
+
+.message-container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20rpx 0;
+}
+
+.message-prefix-container{
+    width: 200rpx;
+}

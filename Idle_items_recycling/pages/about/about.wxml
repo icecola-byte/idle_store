@@ -1,0 +1,44 @@
+<view class="activity-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+                class="navigator-bar"
+                bind:click-left="onBack"
+                border="{{true}}"
+                title="关于我们"
+                fixed="{{true}}"
+                placeholder="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+
+    <view class="content-container">
+        <view class="app-name-container">
+            <view class="app-name-description">
+                <text>小程序名称</text>
+            </view>
+            <view class="app-name-text">
+                <text>{{init.appName}}</text>
+            </view>
+        </view>
+        <view class="phone-container">
+            <view class="phone-description">
+                <text>致电</text>
+            </view>
+            <view class="phone-text">
+                <text>{{init.phone}}</text>
+                <view class="t-icon t-icon-zhidian"></view>
+            </view>
+        </view>
+        <view class="qq-container">
+            <view class="qq-description">
+                <text>QQ交流群</text>
+            </view>
+            <view class="qq-text">
+                <text class="qq-text">{{init.qq}}</text>
+                <view class="t-icon t-icon-qq"></view>
+            </view>
+        </view>
+    </view>
+</view>

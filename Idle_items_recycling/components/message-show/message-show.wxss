@@ -1,0 +1,100 @@
+.message-show-container {
+    padding: 12rpx 24rpx;
+}
+
+.time-show-container {
+    min-height: 48rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #8b8b8b;
+    font-size: 22rpx;
+}
+
+.message-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 18rpx;
+}
+
+.message-row-own {
+    flex-direction: row-reverse;
+}
+
+.user-avatar {
+    flex: 0 0 80rpx;
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 8rpx;
+    background-color: #dddddd;
+}
+
+.message-body {
+    max-width: 540rpx;
+    min-width: 0;
+}
+
+.text-message {
+    padding: 14rpx 20rpx;
+    border-radius: 8rpx;
+    background-color: #ffffff;
+    color: #222222;
+    font-size: 30rpx;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.text-message-own {
+    background-color: #95d66f;
+}
+
+.image-message {
+    display: block;
+    width: 280rpx;
+    max-height: 480rpx;
+    border-radius: 8rpx;
+    background-color: #dddddd;
+}
+
+.card-message {
+    width: 500rpx;
+    padding: 20rpx;
+    box-sizing: border-box;
+    border-radius: 8rpx;
+    background-color: #ffffff;
+    border-left: 8rpx solid #5f8f55;
+}
+
+.card-title {
+    color: #222222;
+    font-size: 30rpx;
+    font-weight: 600;
+}
+
+.card-description,
+.card-number {
+    margin-top: 10rpx;
+    color: #777777;
+    font-size: 25rpx;
+    line-height: 1.4;
+}
+
+.recalled-message,
+.unsupported-message {
+    padding: 10rpx 16rpx;
+    color: #888888;
+    font-size: 24rpx;
+    background-color: rgba(255, 255, 255, 0.65);
+    border-radius: 8rpx;
+}
+
+.delivery-status {
+    margin-top: 6rpx;
+    color: #888888;
+    font-size: 21rpx;
+    text-align: right;
+}
+
+.delivery-failed {
+    color: #d44333;
+}

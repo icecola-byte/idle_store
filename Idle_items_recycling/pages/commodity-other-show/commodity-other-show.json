@@ -1,0 +1,5 @@
+{
+    "usingComponents": {
+        "commodity-browse-show": "/components/commodity-browse-show/commodity-browse-show"
+    }
+}

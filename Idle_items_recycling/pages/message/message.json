@@ -1,0 +1,9 @@
+{
+    "usingComponents": {
+        "chat-session": "/components/chat-session/chat-session",
+        "van-button": "@vant/weapp/button/index",
+        "van-empty": "@vant/weapp/empty/index",
+        "van-loading": "@vant/weapp/loading/index"
+    },
+    "enablePullDownRefresh": true
+}

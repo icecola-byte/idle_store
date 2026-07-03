@@ -1,0 +1,47 @@
+<view class="my-commodity-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+            title="我的商品"
+            bind:click-left="onBack"
+            border="{{false}}"
+            fixed="{{true}}"
+            placeholder="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <view class="content-container">
+        <view class="tabs-container">
+            <van-tabs id="tabs"
+                      sticky="{{true}}"
+                      offset-top="{{init.navBarHeight}}"
+                      active="{{ tabsActive }}"
+                      bind:change="onTabsChange" 
+                      color="#a3c373"
+                      animated
+                      border>
+                <block wx:for="{{commodityStatusValues}}" wx:for-item="tabItem" wx:for-index="tabIndex" wx:key="tabIndex">
+                    <van-tab title="{{tabItem}}">
+                        <block wx:for="{{commodityInfoShow}}" wx:for-item="commodityItem" wx:key="commodityId">
+                            <commodity-show 
+                                commodityInfo="{{commodityItem}}"
+                                tag="{{true}}"
+                                statusShow="{{true}}"> 
+                                <view wx:if="{{commodityInfoAllowUpdate[index]}}" data-id="{{commodityItem.commodityId}}" class="operation-update" slot="operation-update" bind:tap="updateCommodityOperation">
+                                    {{commodityInfoUpdateText}}
+                                </view>
+                                <view wx:if="{{commodityInfoAllowDelete[index]}}" data-id="{{commodityItem.commodityId}}" class="operation-delete" slot="operation-delete" bind:tap="deleteCommodityOperation">
+                                    {{commodityInfoDeleteText}}
+                                </view>
+                            </commodity-show>
+                        </block>
+                    </van-tab>
+                </block>
+            </van-tabs>
+        </view>
+    </view>
+    <van-dialog id="van-dialog" />
+    <van-notify id="van-notify" />
+    <van-toast id="van-toast"/>
+</view>

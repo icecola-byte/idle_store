@@ -1,0 +1,43 @@
+<view class="index-container">
+    <!-- 选择地址弹出层 -->
+    <van-popup show="{{ addressPopupShow }}" round position="bottom">
+        <van-cascader
+            wx:if="{{ addressPopupShow }}"
+            title="请选择所在地区"
+            value="{{communityValue}}"
+            active-color="#ee0a24"
+            options="{{ communityOptions }}"
+            bind:close="onAddressSelectClose"
+            bind:finish="onAddressSelectFinish"
+            closeable="false"
+        />
+    </van-popup>
+    
+    <!-- 输入手机号弹出层 -->
+    <van-popup show="{{ !isLogin }}" position="bottom" custom-style="height: 30%" bind:close="onClose" round>
+        <view class="popup-input-phone-container">
+            <view class="input-phone-warn-text" style="display: flex; align-items: center;">
+                <view class="t-icon t-icon-dengpao"></view>
+                <text>为保证完整的服务, 请输入您的手机号进行登录</text>
+            </view>
+            <view class="input-phone-form-container">
+                <form class="input-phone-form" bindsubmit="submitPhone">
+                    <view class="t-icon t-icon-shouji"></view>
+                    <van-field
+                        name="phone"
+                        title-width="4.2em"
+                        maxlength="11"
+                        value="{{ userInfo.phone }}"
+                        label="手机号"
+                        auto-focus
+                        placeholder="请输入手机号"
+                        error-message="{{inputErrorMessage}}"
+                        border="{{ true }}"
+                    />
+                    <van-button type="primary" form-type="submit">提交</van-button>
+                </form>
+            </view>
+        </view>
+    </van-popup>
+    <van-toast id="van-toast"/>
+</view>

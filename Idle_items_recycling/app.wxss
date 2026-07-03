@@ -1,0 +1,51 @@
+/**app.wxss**/
+@import './style/iconfont-weapp-icon.wxss';
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 200rpx 0;
+  box-sizing: border-box;
+} 
+
+
+.flex-row-align-item-center{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.margin-top-10{
+    margin-top: 10rpx;
+}
+
+.margin-bottom-10{
+    margin-bottom: 10rpx;
+}
+
+.margin-left-10{
+    margin-left: 10rpx;
+}
+
+.margin-right-10{
+    margin-right: 10rpx;
+}
+
+.box-shadow{
+    border: 1rpx solid #efefef;
+    box-shadow: 1rpx 1rpx 15rpx #ddd;
+}
+
+page {
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',
+      sans-serif;
+}
+/* 隐藏 scroll-view 的滚动条 */
+::-webkit-scrollbar {
+    display:none;
+    width:0;
+    height:0;
+    color:transparent;
+}

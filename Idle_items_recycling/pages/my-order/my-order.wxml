@@ -1,0 +1,99 @@
+<view class="my-order-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+            title="我的订单"
+            bind:click-left="onBack"
+            border="{{false}}"
+            fixed="{{true}}"
+            placeholder="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+    <view class="content-container">
+        <view class="tabs-container">
+            <van-tabs id="tabs"
+                      sticky="{{true}}"
+                      offset-top="{{init.navBarHeight}}"
+                      active="{{ init.tabsActive }}"
+                      bind:change="onTabsChange" 
+                      color="#a3c373"
+                      animated
+                      border
+                      swipeable>
+                <block wx:for="{{init.tabsOrderStatus}}" wx:for-item="tabItem" wx:for-index="tabIndex" wx:key="status">
+                    <van-tab title="{{tabItem.statusName}}" name="{{tabItem.status}}">
+                        <block wx:for="{{cache.orderInfoShow}}" wx:key="orderId">
+                            <view class="order-info-container">
+                                <view class="order-info-header-container">
+                                    <view class="order-info-header-username-container">
+                                        <view class="t-icon t-icon-dianpu"></view>
+                                        <text>{{item.buy ? '商家' : '买家'}}</text>
+                                        <text class="order-info-header-username-text"> {{item.buyerInfo == undefined ? '管理员' : ''}}{{item.buy ? item.sellerInfo.name : item.buyerInfo.name}}</text>
+                                    </view>
+                                    <view class="order-info-header-status-container" data-index="{{index}}" bind:tap="showOrderDetail">
+                                        <van-icon class="eye-icon" name="eye-o" size="20px"/>
+                                        <text>{{item.status.statusName}}</text>
+                                    </view>
+                                </view>
+                                <view class="order-info-content-container">
+                                    <view class="order-info-content-picture-container">
+                                        <image class="order-info-content-picture" src="{{item.commodityInfo.picture}}"></image>
+                                    </view>
+                                    <view class="order-info-content-name-ordertime-container">
+                                        <view class="order-info-content-name-container">
+                                            <text>{{item.commodityInfo.name}}</text>
+                                        </view>
+                                        <view class="order-info-content-ordertime-container">
+                                            <text>下单 : {{item.orderTime}}</text>
+                                        </view>
+                                    </view>
+                                    <view class="order-info-content-price-number-container">
+                                        <view class="order-info-content-price-container">
+                                            <text class="price-prefix">￥</text><text class="price-text">{{item.price}}</text>
+                                        </view>
+                                        <view class="order-info-content-number-container">
+                                            <text>共 {{item.orderQuantity}} 件</text>
+                                        </view>
+                                    </view>
+                                    
+                                </view>
+                                <view class="order-info-logistics-operation-container">
+                                    <view class="order-info-logistics-container">
+                                        <view class="t-icon t-icon-wentiqishouwenti"></view>
+                                        <text>物流: {{item.logisticsMode}}</text>
+                                    </view>
+                                    <view class="order-info-operation-container">
+                                        <!-- 订单进行中才可以取消 -->
+                                        <view wx:if="{{item.status.status == 1}}" class="operation-cancel-button" data-id="{{item.orderId}}" bind:tap="onCancelOrder">
+                                            <text>取消订单</text>
+                                        </view>
+                                        <!-- 只有买家可以点击完成订单 -->
+                                        <view data-item="{{item}}" wx:if="{{item.status.status == 1 && item.buy}}" class="operation-complete-button" data-id="{{item.orderId}}" bind:tap="onCompleteOrder">
+                                            <text>完成订单</text>
+                                        </view>
+                                    </view>
+                                </view>
+
+                            </view>
+                            <van-popup show="{{ init.showOrderDetailPopUp }}"
+                                       bind:close="closeOrderDetailPopUp"
+                                       round="{{true}}"
+                                       closeable>
+                                <view class="order-detail-container">
+                                    <order-detail-show order="{{cache.orderDetailShow}}"></order-detail-show>
+                                </view>
+                            </van-popup>
+                        </block>
+                    </van-tab>
+                    
+                </block>
+            </van-tabs>
+        </view>
+    </view>
+    
+    <van-dialog id="van-dialog" />
+    <van-notify id="van-notify" />
+    <van-toast id="van-toast"/>
+</view>

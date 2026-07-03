@@ -1,0 +1,29 @@
+<view class="help-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+                title="帮助中心"
+                bind:click-left="onBack"
+                border="{{true}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+        </van-nav-bar>
+    </view>
+    <view class="content-container">
+        <block wx:for="{{data}}" wx:key="index">
+            <view class="one-tip-container">
+                <view class="title">
+                    <view class="title-prefix-number"><text>{{index + 1}}</text></view>
+                    <view><text>{{item.title}}</text></view>
+                </view>
+                <view class="content">
+                    <view class="a-content-container" wx:for="{{item.content}}" wx:for-item="ct" wx:for-index="idx" wx:key="idx">
+                        <view class="content-prefix-circle"></view>
+                        <view class="content-text">
+                            <text>{{ct}}</text>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </block>
+    </view>
+</view>

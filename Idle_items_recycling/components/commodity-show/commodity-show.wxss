@@ -1,0 +1,130 @@
+.commodity-container{
+    display: flex;
+    flex-direction: column;
+    margin: 20rpx 40rpx;
+    padding-bottom: 20rpx;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.header-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10rpx;
+}
+
+.header-commodity-status-container{
+    display: flex;
+    align-items: center;
+    color:#8b9a9f;
+    font-size: 0.9em;
+}
+
+.header-commodity-status-container .eye-icon{
+    margin-right: 5rpx;
+    margin-top: 5rpx;
+}
+
+.t-icon-biaoqian{
+    width: 18px;
+    height: 18px;
+}
+
+.header-message, .header-commodity-status-name{
+    color:#8b9a9f;
+    font-size: 0.9em;
+}
+
+.content-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.commodity-image{
+    width: 128rpx;
+    height: 128rpx;
+    border-radius: 10%;
+}
+
+.content-name-tag-container{
+    padding: 0 40rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-grow: 1;
+}
+
+.content-name{
+    color: #333333;
+}
+
+.content-price-number-container{
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-end;
+    align-items:flex-end;
+    flex-grow: 1;
+}
+
+.content-price-container{
+    display: flex;
+    align-items: center;
+}
+
+.content-price-icon{
+    width: 18px;
+    height: 18px;
+    margin-right: 6rpx;
+}
+
+.content-price-text{
+    /* color: #272727; */
+    color: #f2be00;
+}
+
+.content-price-text-decimal, .content-price-text-icon{
+    font-size: 0.7em;
+}
+
+.content-price-text-icon{
+    margin-right: -4rpx;
+}
+
+.content-number{
+    color: #8b9a9f;
+    margin-top: 10rpx;
+}
+
+.content-tags{
+    font-size: 0.7em;
+}
+
+.content-tags-text{
+    padding: 4rpx 8rpx;
+    border: 1px solid;
+    margin-right: 10rpx;
+}
+
+.tags-color0{
+    color: #f2be00;
+}
+
+.tags-color1{
+    color: #a3c373;
+}
+
+.operation{
+    display: flex;
+    margin: 20rpx 0 10rpx 0;
+    justify-content: flex-end;
+}
+
+.commodity-detail-container{
+    width: 700rpx;
+    display: flex;
+    justify-content: center;
+}
+
+

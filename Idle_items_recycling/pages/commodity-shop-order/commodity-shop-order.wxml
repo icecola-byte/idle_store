@@ -1,0 +1,225 @@
+<view class="commodity-shop-order-container">
+
+        <view class="navigator-bar-container">
+            <van-nav-bar
+                bind:click-left="onBack"
+                border="{{true}}"
+                title="填写订单">
+                
+                <view class="t-icon t-icon-zuojiantou" slot="left" />
+    
+            </van-nav-bar>
+
+           
+        </view>
+        <van-steps steps="{{ steps }}"
+                   active="{{ stepActive }}"
+                   active-color="#a3c373"
+                   inactive-color="#efefef" />
+        <view class="commodity-shop-order-content-container">
+            <!-- 退出时间为 0, 进入消耗时间, 但是退出还是有卡顿, 使用 wx:if 来隐藏 -->
+            <van-transition name="slide-right" show="{{ stepActive == 0 }}" duration="{{ {enter: 600, leave: 0} }}" >
+                <view wx:if="{{ stepActive == 0 }}" class="logistics-mode-select-container">
+                    <van-radio-group value="{{ orderInfo.logisticsMode }}">
+                        <van-cell-group inset>
+                            <block wx:for="{{logistics}}" wx:for-item="value" wx:for-index="key" wx:key="key">
+                                <van-cell center title="{{value}}" clickable data-name="{{key}}" bind:click="onOrderLogisticsModeClick" border="{{false}}">
+                                    <van-radio checked-color="#a3c373" slot="right-icon" name="{{key}}" />
+                                </van-cell>
+                            </block>
+                        </van-cell-group>
+                    </van-radio-group>
+                    <van-cell-group inset>
+                        
+                        <van-cell center title="购买数量" clickable border="{{false}}">
+                            <van-stepper value="{{orderInfo.amount}}" min="1" max="{{commodityInfo.amount - commodityInfo.soldOutNumber}}"
+                                bind:change="onOrderNumberChange"/>
+                        </van-cell>
+                    </van-cell-group>
+                    
+                </view>
+            </van-transition>
+            <van-transition name="slide-right" show="{{ stepActive == 1 }}" duration="{{ {enter: 600, leave: 0} }}" >
+                <view wx:if="{{ stepActive == 1 }}" class="logistics-info-supply-container">
+                    <!-- 物物置换 -->
+                    <view wx:if="{{ orderInfo.logisticsMode == '2' }}" class="own-commodity-select-more-container">
+                        <scroll-view enable-flex scroll-y class="own-commodity-select-container">
+                            <van-checkbox-group value="{{ oneCommodityListChecked }}" bind:change="onCheckBoxGroupChange">
+                                <block wx:for="{{userCommodityInfo}}" wx:key="commodityId">
+                                    <commodity-show 
+                                        commodityInfo="{{item}}"
+                                        statusShow="{{false}}"
+                                        class="own-commodity-show"
+                                        wx:if="{{!startSelect}}"
+                                        tag="{{false}}"
+                                        message="商品编号: {{index + 1}}">
+                                    </commodity-show>
+                                    <van-checkbox wx:if="{{startSelect}}" 
+                                        name="{{item.commodityId}}"
+                                        label-disabled
+                                        checked-color="#a3c373">
+                                        <commodity-show 
+                                            commodityInfo="{{item}}"
+                                            statusShow="{{false}}"
+                                            class="own-commodity-show"
+                                            tag="{{false}}"
+                                            customNumberShow="{{true}}"
+                                            message="商品编号: {{index + 1}} 数量: {{item.amount - item.soldOutNumber}}">
+                                            <van-stepper min="1" max="{{item.amount - item.soldOutNumber}}"
+                                                slot="number-show"
+                                                input-width="24px"
+                                                button-size="24px"
+                                                bind:change="onNumberChange"
+                                                data-commodityId="{{item.commodityId}}"/>
+                                        </commodity-show>
+                                    </van-checkbox>
+                                </block>
+                            </van-checkbox-group>
+                        </scroll-view> 
+                        <view class="add-a-commodity-select-list-container">
+                            <view class="t-icon t-icon-tianjia" bind:tap="startOneCommodityListSelect"></view>
+                            <view class="add-text-hint"><text>点击添加组合项</text></view>
+                            <view wx:if="{{startSelect}}" class="on-select-commodity-select-complete-button">
+                                <van-button type="default" 
+                                    color="#edfff0"
+                                    bind:tap="addOneSelectCommodityListComplete"
+                                    size="mini">
+                                    <text style="color: #a3c373;">完成</text>
+                                </van-button>
+                            </view>
+                            
+                        </view>
+
+                        <view class="selected-commodity-list-container">
+                            <block wx:for="{{commodityListCheckedResultShow}}" wx:for-item="oneShow" wx:key="index">
+                                <van-divider contentPosition="left" 
+                                    textColor="#a0c375">组合{{index + 1}}</van-divider>
+                                    <view class="a-selected-commodity-list-container">
+                                        <block wx:for="{{oneShow}}" wx:for-item="value" wx:for-index="key" wx:key="key">
+                                            <van-cell title="商品编号: {{key}}" value="×{{value}}" border="{{false}}"/>
+                                        </block>   
+                                    </view>
+                                
+                            </block>
+                            
+                        </view>
+                    </view>
+                    
+                    <!-- 送货上门 -->
+                    <view wx:if="{{ orderInfo.logisticsMode == '4' }}" class="user-address-container">
+                        <van-field
+                            type="text"
+                            value="{{ userInfo.addressDetail }}"
+                            title-width="4.2em"
+                            placeholder="详细地址, 例1号楼1单元101室"
+                            label="门牌号"
+                            border="{{true}}"
+                            clearable="{{true}}"
+                            center="true"
+                            name="addressDetail"
+                            bind:blur="onUserAddressInputComplete"
+                            bind:clear="onUserAddressInputComplete"
+                        />
+                    </view>
+                    <!-- 社区贸易 -->
+                    <view wx:if="{{ orderInfo.logisticsMode == '8' }}" class="commodity-address-container">
+                        <van-field
+                            type="text"
+                            placeholder="{{ communityInfo.tradingPlace }}"
+                            title-width="7.2em"
+                            label="取货地址"
+                            border="{{true}}"
+                            center="true"
+                            readonly
+                        />
+                        <van-field
+                            type="text"
+                            placeholder="{{ communityInfo.managerName }}"
+                            title-width="7.2em"
+                            label="负责人"
+                            border="{{true}}"
+                            center="true"
+                            readonly
+                        />
+                        <van-field
+                            type="text"
+                            placeholder="{{ communityInfo.managerPhone }}"
+                            title-width="7.2em"
+                            label="联系电话"
+                            border="{{true}}"
+                            center="true"
+                            readonly
+                        />
+                    </view>
+                </view>
+            </van-transition>
+            <!--订单确认以及优惠卷选择-->
+            <van-transition name="slide-right" show="{{ stepActive == 2 }}" duration="{{ {enter: 600, leave: 0} }}" >
+                <view wx:if="{{ stepActive == 2 }}" class="order-info-show-container">
+                    <van-cell-group title="信息" inset border>
+                        <van-cell title="物流方式" border="{{false}}" value="{{logistics[orderInfo.logisticsMode]}}"/>
+                    
+                        <block wx:if="{{orderInfo.logisticsMode == '2'}}">
+                            <van-cell title="交易地点" border="{{false}}" value="待定"/>
+                        </block>
+                        <block wx:elif="{{orderInfo.logisticsMode == '4'}}">
+                            <van-cell title="交易地点" border="{{false}}" value="{{userInfo.addressDetail}}"/>
+                        </block>
+                        <block wx:elif="{{orderInfo.logisticsMode == '8'}}">
+                            <van-cell title="取货地址" border="{{false}}" value="{{communityInfo.tradingPlace}}"/>
+                            <van-cell title="负责人" border="{{false}}" value="{{communityInfo.managerName}}"/>
+                            <van-cell title="联系电话" border="{{false}}" value="{{communityInfo.managerPhone}}"/>
+                        </block>
+                        <van-cell title="下单数量" border="{{false}}" value="×{{orderInfo.amount}}"/>
+                    </van-cell-group>
+
+                    <van-cell-group title="优惠卷" inset border>
+                        <van-cell title="{{(orderInfo.logisticsMode == 2 || commodityInfo.drainagePlan == false) ? '无法使用优惠卷' : cache.userSelectCouponShow}}" is-link bind:click="showPopCoupon" />
+                    </van-cell-group>
+
+                    <van-popup show="{{ showPopCoupon }}" 
+                        bind:close="closeShowPopCoupon"
+                        position="bottom"
+                        closeable>
+                        <van-radio-group value="{{ orderInfo.couponId }}">
+                            <van-cell-group inset title="可用优惠卷">
+                                <block wx:for="{{cache.userCoupon}}" wx:key="couponId">
+                                    <van-cell title="{{item.text}}" clickable data-couponId="{{item.couponId}}" data-text="{{item.text}}" bind:click="onCouponSelectChange">
+                                        <van-radio slot="right-icon" checked-color="#a3c373" name="{{item.couponId}}" />
+                                    </van-cell>
+                                </block>
+                            </van-cell-group>
+                        </van-radio-group>
+                    </van-popup>
+                    
+                    <view class="order-price-info-container">
+                        <view class="order-discount-info-container">
+                            <text class="price-text">总计</text>
+                        </view>
+                        <view class="order-real-price-info-container">
+                            <text class="discount-text">已折扣￥{{cache.orderDiscount}}</text>
+                            <text class="price-icon">￥</text>
+                            <text class="price-text">{{orderInfo.logisticsMode == '2' ? '0' : orderInfo.amount * commodityInfo.price - cache.orderDiscount}}</text>
+                        </view>
+                    </view>
+                </view>
+            </van-transition>
+        </view>
+        <view class="btn-container">
+            <van-button type="default" 
+                color="#fdf2cb" 
+                bind:tap="onPreStep"
+                class="pre-step-button">
+                <text style="color: #f2be00;">{{buttonText.preStepText}}</text>
+            </van-button>
+            <van-button type="default" 
+                color="#edfff0"
+                bind:tap="onNextStep"
+                class="next-step-button">
+                    <text style="color: #a3c373;">{{buttonText.nextStepText}}</text>
+            </van-button>
+        </view>
+
+        <van-toast id="van-toast"/>
+        <van-dialog id="van-dialog" />
+</view>

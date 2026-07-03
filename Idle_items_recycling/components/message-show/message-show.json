@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "commodity-detail-show": "/components/commodity-detail-show/commodity-detail-show"
+  }
+}

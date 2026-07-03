@@ -1,0 +1,5 @@
+{
+    "usingComponents": {
+        "commodity-show": "/components/commodity-show/commodity-show"
+    }
+}

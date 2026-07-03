@@ -1,0 +1,58 @@
+<view class="chat-page-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+            bind:click-left="onBack"
+            border="{{true}}"
+            title="{{init.oppositeInfo.oppositeName}}"
+            fixed="{{true}}"
+            placeholder="{{true}}">
+            <van-icon name="arrow-left" slot="left" size="22px" />
+        </van-nav-bar>
+    </view>
+
+    <scroll-view
+        scroll-into-view="{{scrollIntoView}}"
+        bindscrolltoupper="loadEarlierMessages"
+        upper-threshold="60"
+        enable-flex="{{true}}"
+        scroll-y="{{true}}"
+        style="height: {{init.scrollViewHeight}}px;"
+        class="content-container">
+        <view wx:if="{{history.loading && history.initialized}}" class="history-loading">
+            <van-loading size="18px">加载历史消息</van-loading>
+        </view>
+        <view wx:if="{{history.initialized && !history.hasMore && init.message.messageList.length > 0}}" class="history-end">
+            已经到最早的消息了
+        </view>
+        <van-empty wx:if="{{history.initialized && init.message.messageList.length === 0}}" description="暂无消息" />
+        <block wx:for="{{init.message.messageList}}" wx:key="uniqueKey">
+            <view id="message-{{item.uniqueKey}}">
+                <message-show
+                    message="{{item}}"
+                    avatar="{{init.oppositeInfo.oppositeAvatar}}"
+                    bind:retry="retryMessage" />
+            </view>
+        </block>
+    </scroll-view>
+
+    <view wx:if="{{init.sessionType === 1}}" class="operation-container">
+        <view class="input-container">
+            <input
+                class="input-component"
+                type="text"
+                confirm-type="send"
+                value="{{cache.messageText}}"
+                cursor-color="#4f7f49"
+                bindinput="onMessageInput"
+                bindconfirm="sendMessageText"
+                cursor-spacing="8"
+                confirm-hold="{{true}}" />
+        </view>
+        <button class="icon-button" bind:tap="selectPicture" disabled="{{sending}}">
+            <van-icon name="photo-o" size="24px" />
+        </button>
+        <button class="icon-button send-button" bind:tap="sendMessageText" disabled="{{sending || !cache.messageText}}">
+            <van-icon name="guide-o" size="24px" />
+        </button>
+    </view>
+</view>

@@ -1,0 +1,18 @@
+<view class="commodity-shop-container">
+    <view class="navigator-bar-container">
+        <van-nav-bar
+                bind:click-left="onBack"
+                border="{{true}}"
+                title="{{init.title}}">
+
+            <view class="t-icon t-icon-zuojiantou" slot="left" />
+
+        </van-nav-bar>
+    </view>
+
+    <view class="commodity-show-container">
+        <commodity-browse-show info="{{cache.commodityInfoShow}}"></commodity-browse-show>
+    </view>
+    <van-toast id="van-toast"/>
+
+</view>
