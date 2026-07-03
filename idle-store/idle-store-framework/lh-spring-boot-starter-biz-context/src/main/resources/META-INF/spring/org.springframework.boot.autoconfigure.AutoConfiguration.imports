@@ -1,0 +1,2 @@
+com.lh.framework.biz.context.autoconfigure.ContextAutoConfiguration
+com.lh.framework.biz.context.autoconfigure.FeignContextAutoConfiguration
