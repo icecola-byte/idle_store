@@ -1,0 +1,9 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: idle-store-distributed-id-generator
+  profiles:
+    active: dev
+
