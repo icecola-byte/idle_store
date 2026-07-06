@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        group: DEFAULT_GROUP
+        namespace: idlestore-prod
+        server-addr: 127.0.0.1:8848
+      config:
+        group: DEFAULT_GROUP
+        file-extension: yaml
+        namespace: idlestore-prod
+        server-addr: 127.0.0.1:8848
+
+  config:
+    import:
+      - nacos:file-storage.yaml?group=DEFAULT_GROUP&refreshEnabled=true
