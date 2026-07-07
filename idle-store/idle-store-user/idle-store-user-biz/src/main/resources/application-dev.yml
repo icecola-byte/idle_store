@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        group: DEFAULT_GROUP
+        namespace: idlestore-dev
+        server-addr: 127.0.0.1:8848
+      config:
+        group: DEFAULT_GROUP
+        namespace: idlestore-dev
+        file-extension: yaml
+        server-addr: 127.0.0.1:8848
+  config:
+    import:
+      - nacos:shared-mysql.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      - nacos:shared-redis.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      - nacos:shared-openfeign.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+
+logging:
+  level:
+    com.lh.idlestore.user.repository.mapper: debug

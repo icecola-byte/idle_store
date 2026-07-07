@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lh.idlestore.user.repository.mapper.RoleMapper">
+    <select id="selectEnabledList" resultType="com.lh.idlestore.user.repository.dataobject.RoleDO">
+        select id, role_key, role_name
+        from t_role
+        where status = 0 and is_deleted = 0
+    </select>
+</mapper>

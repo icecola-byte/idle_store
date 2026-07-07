@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lh.idlestore.user.repository.mapper.RolePermissionMapper">
+    <select id="selectByRoleIds" resultType="com.lh.idlestore.user.repository.dataobject.RolePermissionDO">
+        select role_id, permission_id
+        from t_role_permission_rel
+        where role_id in
+        <foreach collection="roleIds" item="roleId" separator="," open="(" close=")">
+            #{roleId}
+        </foreach>
+    </select>
+</mapper>
