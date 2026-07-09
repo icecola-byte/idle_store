@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: idle-store-auth
+  profiles:
+    active: dev
+
+server:
+  port: 8081

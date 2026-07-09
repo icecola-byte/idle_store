@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        namespace: idlestore-dev
+        enabled: true
+        group: DEFAULT_GROUP
+        server-addr: 127.0.0.1:8848
+      config:
+        group: DEFAULT_GROUP
+        namespace: idlestore-dev
+        file-extension: yaml
+        server-addr: 127.0.0.1:8848
+  config:
+    import:
+      - nacos:shared-redis.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      - classpath:config/sa-token.yml
+      - classpath:config/thread-pools.yml
+      - nacos:auth-secrets.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      - nacos:shared-openfeign.yaml?group=DEFAULT_GROUP&refreshEnabled=true

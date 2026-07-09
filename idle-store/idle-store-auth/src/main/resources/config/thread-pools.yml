@@ -1,0 +1,11 @@
+# 异步线程池配置（短信发送等）
+thread-pools:
+  executors:
+    sms:
+      core-pool-size: 10
+      max-pool-size: 50
+      queue-capacity: 200
+      keep-alive-seconds: 30
+      await-termination-seconds: 60
+      thread-name-prefix: AuthSms-
+      rejection-policy: caller-runs
