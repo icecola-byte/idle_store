@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lh.idlestore.chat.repository.mysql.mapper.ChatSessionMapper">
+
+    <select id="selectBySessionKey"
+            resultType="com.lh.idlestore.chat.repository.mysql.dataobject.ChatSessionDO">
+        SELECT *
+        FROM t_chat_session
+        WHERE session_key = #{sessionKey}
+          AND is_deleted = 0
+    </select>
+
+    <select id="selectByIdForUpdate"
+            resultType="com.lh.idlestore.chat.repository.mysql.dataobject.ChatSessionDO">
+        SELECT *
+        FROM t_chat_session
+        WHERE session_id = #{sessionId}
+          AND is_deleted = 0
+        FOR UPDATE
+    </select>
+
+    <update id="updateLastMessage">
+        UPDATE t_chat_session
+        SET last_sequence = #{sequence},
+            last_message_id = #{messageId},
+            last_message = #{lastMessage},
+            last_message_time = #{lastMessageTime}
+        WHERE session_id = #{sessionId}
+          AND is_deleted = 0
+          AND last_sequence &lt; #{sequence}
+    </update>
+
+</mapper>

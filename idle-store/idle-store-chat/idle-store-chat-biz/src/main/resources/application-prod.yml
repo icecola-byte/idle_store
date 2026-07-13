@@ -1,0 +1,28 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        group: DEFAULT_GROUP
+        server-addr: 127.0.0.1:8848
+        namespace: idlestore-prod
+      config:
+        group: DEFAULT_GROUP
+        file-extension: yaml
+        server-addr: 127.0.0.1:8848
+        namespace: idlestore-prod
+  config:
+    import:
+      - nacos:shared-mysql.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      - nacos:shared-cassandra.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      - nacos:shared-openfeign.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: idle-store-chat-producer
+    send-message-timeout: 3000
+
+chat:
+  outbox:
+    publish-delay: 1000

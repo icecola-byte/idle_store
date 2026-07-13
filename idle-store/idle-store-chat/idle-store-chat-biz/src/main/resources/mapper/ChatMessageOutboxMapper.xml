@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lh.idlestore.chat.repository.mysql.mapper.ChatMessageOutboxMapper">
+
+    <select id="selectReadyForUpdate"
+            resultType="com.lh.idlestore.chat.repository.mysql.dataobject.ChatMessageOutboxDO">
+        SELECT *
+        FROM t_chat_message_outbox
+        WHERE event_status IN (0, 2)
+          AND next_retry_time &lt;= #{now}
+        ORDER BY event_id
+        LIMIT #{limit}
+        FOR UPDATE SKIP LOCKED
+    </select>
+
+    <update id="markSent">
+        UPDATE t_chat_message_outbox
+        SET event_status = 1,
+            sent_time = #{sentTime}
+        WHERE event_id = #{eventId}
+          AND event_status IN (0, 2)
+    </update>
+
+    <update id="markRetry">
+        UPDATE t_chat_message_outbox
+        SET event_status = 2,
+            retry_count = retry_count + 1,
+            next_retry_time = #{nextRetryTime}
+        WHERE event_id = #{eventId}
+          AND event_status IN (0, 2)
+    </update>
+
+    <select id="selectBySenderAndClientMessageId"
+            resultType="com.lh.idlestore.chat.repository.mysql.dataobject.ChatMessageOutboxDO">
+        SELECT *
+        FROM t_chat_message_outbox
+        WHERE sender_id = #{senderId}
+        AND client_message_id = #{clientMessageId}
+        LIMIT 1
+    </select>
+
+</mapper>

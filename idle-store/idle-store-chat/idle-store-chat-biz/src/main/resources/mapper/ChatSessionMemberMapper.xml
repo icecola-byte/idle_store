@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lh.idlestore.chat.repository.mysql.mapper.ChatSessionMemberMapper">
+
+    <select id="selectBySessionAndUser"
+            resultType="com.lh.idlestore.chat.repository.mysql.dataobject.ChatSessionMemberDO">
+        SELECT *
+        FROM t_chat_session_member
+        WHERE session_id = #{sessionId}
+          AND user_id = #{userId}
+    </select>
+
+    <select id="selectBySessionAndUserForUpdate"
+            resultType="com.lh.idlestore.chat.repository.mysql.dataobject.ChatSessionMemberDO">
+        SELECT *
+        FROM t_chat_session_member
+        WHERE session_id = #{sessionId}
+          AND user_id = #{userId}
+        FOR UPDATE
+    </select>
+
+    <update id="increaseUnread">
+        UPDATE t_chat_session_member
+        SET unread_count = unread_count + 1,
+            is_deleted = 0
+        WHERE session_id = #{sessionId}
+          AND user_id = #{userId}
+    </update>
+
+    <update id="markRead">
+        UPDATE t_chat_session_member
+        SET last_read_sequence = GREATEST(last_read_sequence, #{lastReadSequence}),
+            unread_count = CASE
+                               WHEN #{lastReadSequence} &gt;= #{currentLastSequence} THEN 0
+                               ELSE unread_count
+                           END
+        WHERE session_id = #{sessionId}
+          AND user_id = #{userId}
+    </update>
+
+    <select id="selectOtherMember"
+            resultType="com.lh.idlestore.chat.repository.mysql.dataobject.ChatSessionMemberDO">
+        SELECT *
+        FROM t_chat_session_member
+        WHERE session_id = #{sessionId}
+        AND user_id != #{currentUserId}
+        LIMIT 1
+    </select>
+
+    <select id="selectSessionSummaries"
+            resultType="com.lh.idlestore.chat.repository.mysql.projection.ChatSessionSummaryProjection">
+        SELECT s.session_id,
+               s.session_type,
+               peer.user_id AS peer_user_id,
+               s.last_sequence,
+               s.last_message,
+               s.last_message_time,
+               member.unread_count,
+               member.last_read_sequence,
+               s.create_time
+        FROM t_chat_session_member member
+                 INNER JOIN t_chat_session s
+                            ON s.session_id = member.session_id
+                 LEFT JOIN t_chat_session_member peer
+                           ON peer.session_id = member.session_id
+                               AND s.session_type = 1
+                               AND peer.user_id != member.user_id
+        WHERE member.user_id = #{userId}
+          AND member.is_deleted = 0
+          AND s.is_deleted = 0
+        ORDER BY COALESCE(s.last_message_time, s.create_time) DESC,
+                 s.session_id DESC
+    </select>
+
+</mapper>
