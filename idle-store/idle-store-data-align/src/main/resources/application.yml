@@ -1,0 +1,12 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: idle-store-data-align
+  profiles:
+    active: dev
+
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
