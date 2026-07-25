@@ -36,24 +36,25 @@ Page({
             });
         }).exec();
 
-        // 请求商品分类信息
-        await wx.p.request({
-            url: app.globalData.local + '/commodity/category/all',
-            method: 'GET'
-        }).then(res => {         
-            // 设置商品分类信息,  一级分类选项
-            this.setData({
-                categoryOptions: res.data.data,
-                categoryPrimaryOptions: res.data.data.map(i => {
-                    return {
-                        value: i.value,
-                        text: i.text
-                    }
-                })
-            });
-            // 设置当前一级分类信息, 导航栏标题,
-            this._primarySelectChange(options.categoryId);
-        })
+        // 从全局缓存读取商品分类树
+        const tree = app.getCategoryTree();
+        const mappedTree = tree.map(item => ({
+            value: item.categoryId,
+            text: item.categoryName,
+            children: (item.children || []).map(child => ({
+                value: child.categoryId,
+                text: child.categoryName,
+            })),
+        }));
+        this.setData({
+            categoryOptions: mappedTree,
+            categoryPrimaryOptions: mappedTree.map(item => ({
+                value: item.value,
+                text: item.text,
+            })),
+        });
+        // 设置当前一级分类信息、导航栏标题
+        this._primarySelectChange(options.categoryId);
     },
 
     toggleDropdownMenu(){

@@ -53,10 +53,6 @@ public class UserDO {
      */
     private String avatarUrl;
 
-    /**
-     * 注册时间
-     */
-    private LocalDateTime registerTime;
 
     /**
      * 硬币余额

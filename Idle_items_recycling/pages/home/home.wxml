@@ -18,8 +18,18 @@
             </view>
         </view>
     </view>
-    <view class="classfiy-container">
-        <home-classfiy-bar category="{{categoryOptions}}"></home-classfiy-bar>
+    <view class="classify-card">
+        <view class="classify-heading">
+            <view>
+                <view class="classify-title">逛逛分类</view>
+                <view class="classify-subtitle">发现社区里的闲置好物</view>
+            </view>
+            <view class="classify-hint">左右滑动</view>
+        </view>
+        <home-classfiy-bar
+            category="{{categoryOptions}}"
+            bind:change="onCategoryChange"
+        />
     </view>
     <view class="other-options-container">
         <view class="other-options-background"></view>
@@ -62,4 +72,4 @@
 
     <van-notify id="van-notify" top="20px"/>
     <van-toast id="van-toast"/>
-</view> 
+</view>

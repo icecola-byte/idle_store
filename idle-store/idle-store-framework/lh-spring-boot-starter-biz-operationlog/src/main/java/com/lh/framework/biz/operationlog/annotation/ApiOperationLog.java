@@ -1,5 +1,7 @@
 package com.lh.framework.biz.operationlog.annotation;
 
+import org.springframework.core.annotation.AliasFor;
+
 import java.lang.annotation.*;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -11,7 +13,11 @@ public @interface ApiOperationLog {
      *
      * @return
      */
+    @AliasFor("value")
     String description() default "";
+
+    @AliasFor("description")
+    String value() default "";
 
     /**
      * 是否记录请求参数。

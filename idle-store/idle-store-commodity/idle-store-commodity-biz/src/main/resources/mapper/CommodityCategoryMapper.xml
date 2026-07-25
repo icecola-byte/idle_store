@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lh.idlestore.commodity.repository.mapper.CommodityCategoryMapper">
+    <select id="queryEnabledCommodityCategories" resultType="commodityCategoryDO">
+        SELECT category_id, parent_id, category_name, icon_url, sort_order
+        FROM t_commodity_category
+        WHERE status = 1 AND is_deleted = 0
+        ORDER BY parent_id ASC, sort_order ASC, category_id ASC
+    </select>
+
+    <!-- 查询该分类及全部子孙分类 ID -->
+    <select id="findSubtreeIds" resultType="java.lang.Long">
+        WITH RECURSIVE category_tree AS (
+        SELECT category_id
+        FROM t_commodity_category
+        WHERE category_id = #{categoryId}
+        AND is_deleted = 0
+
+        UNION ALL
+
+        SELECT child.category_id
+        FROM t_commodity_category child
+        INNER JOIN category_tree parent
+        ON child.parent_id = parent.category_id
+        WHERE child.is_deleted = 0
+        )
+        SELECT category_id
+        FROM category_tree
+    </select>
+
+    <!-- 批量逻辑删除分类及其全部子分类 -->
+    <update id="logicalDeleteByIds">
+        UPDATE t_commodity_category
+        SET is_deleted = 1,
+        update_time = NOW()
+        WHERE is_deleted = 0
+        AND category_id IN
+        <foreach collection="categoryIds" item="categoryId"
+                 open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </update>
+</mapper>

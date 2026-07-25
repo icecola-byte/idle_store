@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.lh.framework.biz.context.holder.LoginUserContextHolder;
-import com.lh.framework.common.enums.DeletedEnum;
 import com.lh.framework.common.exception.BizException;
 import com.lh.framework.common.util.ParamUtils;
 import com.lh.idlestore.cache.contract.auth.AuthCacheKeys;
@@ -248,10 +247,9 @@ public class UserServiceImpl implements UserService {
                         .status(UserStatusEnum.NORMAL)
                         .avatarUrl(UserDefaultConstants.DEFAULT_AVATAR_URL)
                         .coinBalance(UserDefaultConstants.DEFAULT_COIN_BALANCE)
-                        .registerTime(LocalDateTime.now())
                         .createTime(LocalDateTime.now())
                         .updateTime(LocalDateTime.now())
-                        .isDeleted(DeletedEnum.NO.getValue())
+                        .isDeleted(false)
                         .build();
                 userMapper.insert(userDO);
 
@@ -261,7 +259,7 @@ public class UserServiceImpl implements UserService {
                         .roleId(RoleConstants.COMMON_USER_ROLE_ID) // 用户默认角色就是普通用户
                         .createTime(LocalDateTime.now())
                         .updateTime(LocalDateTime.now())
-                        .isDeleted(DeletedEnum.NO.getValue())
+                        .isDeleted(false)
                         .build();
                 userRoleMapper.insert(userRoleDO);
                 RoleDO roleDO = roleMapper.selectById(RoleConstants.COMMON_USER_ROLE_ID);

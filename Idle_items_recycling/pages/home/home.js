@@ -12,6 +12,8 @@ Page({
         searchValue:'',
         // 商品一级分类
         categoryOptions:[],
+        // 当前选中的一级分类（0 = 全量）
+        selectedCategoryId: 0,
         commodityInfoShow: [],
         isLoading: false,
         total: 0,
@@ -31,21 +33,30 @@ Page({
         app.setUserInfo(userInfo);
 
 
-        // 商品分类信息拉取
-        await wx.p.request({
-            url: app.globalData.local + '/commodity/category/all',
-            method: 'GET'
-        }).then(res => {
-            const categoryOptions = res.data.data.map(i => {
-                return {
-                    value: i.value,
-                    text: i.text
-                };
-            })
-            this.setData({
-                categoryOptions: categoryOptions
-            });
-        });
+        // 读取商品分类树（优先缓存，未命中则自行请求）
+        let tree = app.getCategoryTree();
+        if (tree.length === 0) {
+            try {
+                const res = await wx.p.request({
+                    url: app.globalData.local + '/commodity/categories/tree',
+                });
+                if (res.statusCode === 200 && res.data && res.data.success && res.data.data) {
+                    app.globalData.categoryTree = res.data.data;
+                    tree = res.data.data;
+                } else {
+                    console.error('[home] 分类树接口异常', res);
+                }
+            } catch (e) {
+                console.error('[home] 分类树请求失败', e);
+            }
+        }
+        const categoryOptions = tree.map(item => ({
+            value: item.categoryId,
+            text: item.categoryName,
+            iconUrl: item.iconUrl || '',
+        }));
+        console.log('[home] categoryOptions', categoryOptions);
+        this.setData({ categoryOptions });
 
         // 获取社区信息, 用于页面左上角定位显示
         const {data: {data: communityInfo}} = await wx.p.request({
@@ -66,7 +77,7 @@ Page({
      * 生命周期函数--监听页面显示
      */
     async onShow() {
-        
+
         this._init();
     },
 
@@ -140,5 +151,17 @@ Page({
         wx.navigateTo({
             url: '/pages/commodity-other-show/commodity-other-show?type=' + type + '&title=' + title,
         })
-    }
+    },
+
+    onCategoryChange(e) {
+        const categoryId = Number(e.detail.value);
+        if (!Number.isFinite(categoryId) || categoryId <= 0) {
+            return;
+        }
+
+        this.setData({ selectedCategoryId: categoryId });
+        wx.navigateTo({
+            url: '/pages/commodity-browse/commodity-browse?categoryId=' + categoryId,
+        });
+    },
 })

@@ -1,9 +1,20 @@
-<view class="home-classify-bar-container">
-  <scroll-view class="classfiy-bar-container" enable-flex scroll-x>
-    <block wx:for="{{category}}" wx:key="value">
-      <view class="category-item" data-id="{{item.value}}" bind:tap="gotoCommodityBrowse">
-        {{item.text}}
+<scroll-view wx:if="{{displayCategories.length}}" scroll-x enhanced show-scrollbar="{{false}}" class="category-scroll">
+  <view class="category-list">
+    <view
+      wx:for="{{displayCategories}}"
+      wx:key="value"
+      class="category-item"
+      hover-class="category-item--pressed"
+      hover-stay-time="80"
+      data-id="{{item.value}}"
+      bind:tap="onTap"
+    >
+      <view class="category-icon theme-{{item.themeIndex}}">
+        <image wx:if="{{item.iconUrl}}" class="category-image" src="{{item.iconUrl}}" mode="aspectFit" />
+        <text wx:else class="category-initial">{{item.initial}}</text>
       </view>
-    </block>
-  </scroll-view>
-</view>
+      <text class="category-name">{{item.text}}</text>
+    </view>
+  </view>
+</scroll-view>
+<view wx:else class="category-empty">分类加载中...</view>

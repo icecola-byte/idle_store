@@ -22,5 +22,6 @@
         <module>lh-spring-boot-starter-logging</module>
         <module>lh-spring-boot-starter-thread-pool</module>
         <module>lh-spring-boot-starter-openfeign</module>
+        <module>lh-spring-boot-starter-cache</module>
     </modules>
 </project>

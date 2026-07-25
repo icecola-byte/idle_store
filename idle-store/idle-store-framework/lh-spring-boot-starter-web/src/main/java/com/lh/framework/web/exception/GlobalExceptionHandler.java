@@ -4,6 +4,8 @@ import com.lh.framework.common.exception.BizException;
 import com.lh.framework.common.response.Response;
 import com.lh.framework.web.enums.CommonResponseCodeEnum;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,6 +27,23 @@ public class GlobalExceptionHandler {
     public Response<Object> handleBizException(HttpServletRequest request, BizException e) {
         log.warn("{} request fail, errorCode: {}, errorMessage: {}", request.getRequestURI(), e.getErrorCode(), e.getErrorMessage());
         return Response.fail(e.getErrorCode(), e.getErrorMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseBody
+    public Response<Object> handleConstraintViolationException(
+            HttpServletRequest request,
+            ConstraintViolationException exception) {
+
+        String message = exception.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .findFirst()
+                .orElse("请求参数不合法");
+
+        return Response.fail(
+                CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorCode(),
+                message
+        );
     }
 
     /**

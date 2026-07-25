@@ -40,6 +40,18 @@ App({
             }
             this.setUserInfo(userInfo);
             wx.setStorageSync('isLogin', true);
+
+            // 预加载商品分类树，全局缓存
+            try {
+                const { data: categoryRes } = await wx.p.request({
+                    url: this.globalData.local + '/commodity/categories/tree',
+                });
+                if (categoryRes.success) {
+                    this.globalData.categoryTree = categoryRes.data;
+                }
+            } catch (_) {
+                this.globalData.categoryTree = [];
+            }
         } catch (error) {
             this.clearSession();
             this.navigateToLogin();
@@ -49,6 +61,15 @@ App({
     globalData: {
         local: 'http://localhost:8080',
         userInfo: {},
+        categoryTree: [],
+    },
+
+    /**
+     * 获取商品分类树（从全局缓存中读取）
+     * @returns {Array} 分类树
+     */
+    getCategoryTree() {
+        return this.globalData.categoryTree || [];
     },
 
     setUserInfo(userInfo) {

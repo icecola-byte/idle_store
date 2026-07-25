@@ -1,19 +1,28 @@
 Component({
-  data: {
-    
-  },
   properties: {
     category: {
       type: Array,
       value: [],
+      observer(categories) {
+        const displayCategories = (categories || []).map((item, index) => ({
+          ...item,
+          initial: (item.text || '').slice(0, 1),
+          themeIndex: index % 6,
+        }));
+        this.setData({ displayCategories });
+      },
     },
   },
+  data: {
+    displayCategories: [],
+  },
   methods: {
-    gotoCommodityBrowse(e){
-      const {id} = e.currentTarget.dataset;
-      wx.navigateTo({
-        url: '/pages/commodity-browse/commodity-browse?categoryId=' + id,
-      })
-    }
+    onTap(e) {
+      const id = Number(e.currentTarget.dataset.id);
+      if (!Number.isFinite(id)) {
+        return;
+      }
+      this.triggerEvent('change', { value: id });
+    },
   },
 })

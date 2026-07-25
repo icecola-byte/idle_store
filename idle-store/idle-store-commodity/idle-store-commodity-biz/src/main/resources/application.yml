@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: idle-store-commodity
+  profiles:
+    active: dev
+
+
+server:
+  port: 8087
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/*.xml
+  type-aliases-package: com.lh.idlestore.commodity.repository.dataobject
+
+cache:
+  caffeine:
+    enabled: true
+    default-cache:
+      maximum-size: 1000
+      expire-after-write-seconds: 600
+    caches:
+      commodityCategoryList:
+        maximum-size: 1
+        expire-after-write-seconds: 1800
