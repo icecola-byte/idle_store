@@ -5,9 +5,9 @@ import com.lh.idlestore.user.enums.SexEnum;
 public class UserDefaultConstants {
 
     /**
-     * 默认头像地址
+     * 默认头像文件 ID。
      */
-    public static final String DEFAULT_AVATAR_URL = "https://typora-picture-0.oss-cn-beijing.aliyuncs.com/img/202403171503220.JPG";
+    public static final Long DEFAULT_AVATAR_FILE_ID = 22L;
     /**
      * 默认用户名
      */

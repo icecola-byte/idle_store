@@ -19,6 +19,10 @@
     <dependencies>
         <dependency>
             <groupId>com.lh</groupId>
+            <artifactId>idle-store-oss-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.lh</groupId>
             <artifactId>lh-spring-boot-starter-logging</artifactId>
         </dependency>
         <!-- 业务接口日志组件 -->
@@ -55,10 +59,6 @@
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-bootstrap</artifactId>-->
-<!--        </dependency>-->
 
         <!-- 服务发现 -->
         <dependency>
@@ -75,6 +75,21 @@
         <dependency>
             <groupId>com.lh</groupId>
             <artifactId>lh-spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-3-starter</artifactId>
         </dependency>
 
         <dependency>

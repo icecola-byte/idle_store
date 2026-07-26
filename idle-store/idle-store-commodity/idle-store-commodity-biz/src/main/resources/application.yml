@@ -3,7 +3,10 @@ spring:
     name: idle-store-commodity
   profiles:
     active: dev
-
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
 
 server:
   port: 8087
@@ -29,3 +32,4 @@ commodity:
   cache:
     category:
       delayed-invalidation-delay: 3s
+

@@ -14,4 +14,5 @@ spring:
   config:
     import:
       - nacos:file-storage.yaml?group=DEFAULT_GROUP&refreshEnabled=true
+      - nacos:shared-mysql.yaml?group=DEFAULT_GROUP&refreshEnabled=true
 

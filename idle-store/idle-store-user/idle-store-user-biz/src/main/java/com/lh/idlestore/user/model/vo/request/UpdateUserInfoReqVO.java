@@ -32,9 +32,9 @@ public class UpdateUserInfoReqVO {
     private String communityId;
 
     /**
-     * 头像地址
+     * 头像文件 ID
      */
-    private String avatarUrl;
+    private Long avatarFileId;
 
     /**
      * 性别

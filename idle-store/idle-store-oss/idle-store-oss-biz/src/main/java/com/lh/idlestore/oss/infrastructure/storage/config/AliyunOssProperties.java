@@ -13,4 +13,5 @@ public class AliyunOssProperties {
     private String endpoint;
     private String accessKey;
     private String secretKey;
+    private String bucketName;
 }

@@ -1,5 +1,6 @@
 package com.lh.idlestore.commodity.service;
 
+import com.lh.idlestore.commodity.model.vo.request.UpdateCommodityCategoryReqVO;
 import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryRespVO;
 import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeRespVO;
 
@@ -26,4 +27,6 @@ public interface CommodityCategoryService {
      * @param categoryId 分类 Id
      */
     void deleteCategoryTree(Long categoryId);
+
+    void updateCategoryById(UpdateCommodityCategoryReqVO categoryReqVO);
 }

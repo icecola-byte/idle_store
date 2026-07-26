@@ -29,7 +29,7 @@ public class CommodityCategoryDO {
 
     private String categoryName;
 
-    private String iconUrl;
+    private Long iconFileId;
 
     private Integer sortOrder;
 

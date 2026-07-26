@@ -21,6 +21,7 @@ import com.lh.idlestore.user.enums.SexEnum;
 import com.lh.idlestore.user.enums.UserStatusEnum;
 import com.lh.idlestore.user.model.vo.request.UpdateUserInfoReqVO;
 import com.lh.idlestore.user.model.vo.response.UserProfileRespVO;
+import com.lh.idlestore.user.remote.OssRemoteService;
 import com.lh.idlestore.user.service.UserService;
 import com.lh.idlestore.user.dto.request.FindUserByPhoneRequest;
 import com.lh.idlestore.user.dto.request.MiniLoginRequest;
@@ -36,9 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 
 @Service
@@ -57,6 +56,9 @@ public class UserServiceImpl implements UserService {
     private RoleMapper roleMapper;
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Resource
+    private OssRemoteService ossRemoteService;
 
     private static final String PHONE_REGEX = "\\d{11}";
 
@@ -80,10 +82,10 @@ public class UserServiceImpl implements UserService {
         userDO.setUserId(userId);
         boolean needUpdate = false;
         // 头像
-        String avatarUrl = updateUserInfoReqVO.getAvatarUrl();
-        if (Objects.nonNull(avatarUrl)) {
-            Preconditions.checkArgument(StringUtils.isNotBlank(avatarUrl), CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage());
-            userDO.setAvatarUrl(avatarUrl);
+        Long avatarFileId = updateUserInfoReqVO.getAvatarFileId();
+        if (Objects.nonNull(avatarFileId)) {
+            Preconditions.checkArgument(avatarFileId > 0, CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage());
+            userDO.setAvatarFileId(avatarFileId);
             needUpdate = true;
         }
         // 用户名
@@ -206,18 +208,26 @@ public class UserServiceImpl implements UserService {
         }
 
         Collection<UserDO> users = userMapper.selectBatchIds(userIds);
+        Map<Long, String> avatarUrls = getAccessUrls(users.stream()
+                .filter(user -> !Boolean.TRUE.equals(user.getIsDeleted()))
+                .map(UserDO::getAvatarFileId)
+                .toList());
         List<UserBriefResponse> result = users.stream()
                 .filter(user -> !Boolean.TRUE.equals(user.getIsDeleted()))
-                .map(this::buildUserBrief)
+                .map(user -> buildUserBrief(user, avatarUrls))
                 .toList();
         return result;
     }
 
     private UserBriefResponse buildUserBrief(UserDO userDO) {
+        return buildUserBrief(userDO, getAccessUrls(java.util.Collections.singletonList(userDO.getAvatarFileId())));
+    }
+
+    private UserBriefResponse buildUserBrief(UserDO userDO, Map<Long, String> avatarUrls) {
         return UserBriefResponse.builder()
                 .userId(userDO.getUserId())
                 .username(userDO.getUsername())
-                .avatarUrl(userDO.getAvatarUrl())
+                .avatarUrl(avatarUrls.get(userDO.getAvatarFileId()))
                 .status(Objects.isNull(userDO.getStatus()) ? null : userDO.getStatus().getValue())
                 .build();
     }
@@ -233,7 +243,10 @@ public class UserServiceImpl implements UserService {
         if (Objects.isNull(userDO) || Boolean.TRUE.equals(userDO.getIsDeleted())) {
             throw new BizException(UserResponseCodeEnum.USER_NOT_FOUND);
         }
-        return BeanUtil.copyProperties(userDO, UserProfileRespVO.class);
+        UserProfileRespVO response = BeanUtil.copyProperties(userDO, UserProfileRespVO.class);
+        response.setAvatarUrl(getAccessUrls(Collections.singletonList(userDO.getAvatarFileId()))
+                .get(userDO.getAvatarFileId()));
+        return response;
     }
 
     private UserDO registerUser(String phone) {
@@ -245,7 +258,7 @@ public class UserServiceImpl implements UserService {
                         .username(UserDefaultConstants.DEFAULT_USERNAME)
                         .sex(UserDefaultConstants.DEFAULT_SEX)
                         .status(UserStatusEnum.NORMAL)
-                        .avatarUrl(UserDefaultConstants.DEFAULT_AVATAR_URL)
+                        .avatarFileId(UserDefaultConstants.DEFAULT_AVATAR_FILE_ID)
                         .coinBalance(UserDefaultConstants.DEFAULT_COIN_BALANCE)
                         .createTime(LocalDateTime.now())
                         .updateTime(LocalDateTime.now())
@@ -277,5 +290,14 @@ public class UserServiceImpl implements UserService {
                 return null;
             }
         });
+    }
+
+    private Map<Long, String> getAccessUrls(List<Long> fileIds) {
+        List<Long> validFileIds = fileIds.stream()
+                .filter(Objects::nonNull)
+                .filter(fileId -> fileId > 0)
+                .distinct()
+                .toList();
+        return validFileIds.isEmpty() ? Map.of() : ossRemoteService.getAccessUrls(validFileIds);
     }
 }

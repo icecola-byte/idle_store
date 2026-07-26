@@ -8,6 +8,8 @@ public final class OssApiConstants {
 
     public static final String OPERATION_UPLOAD_FILE = "uploadFile";
 
+    public static final String OPERATION_GET_ACCESS_URLS = "getAccessUrls";
+
     private OssApiConstants() {
     }
 }

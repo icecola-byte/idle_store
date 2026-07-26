@@ -14,8 +14,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>com.lh</groupId>
+            <artifactId>idle-store-oss-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.rocketmq</groupId>

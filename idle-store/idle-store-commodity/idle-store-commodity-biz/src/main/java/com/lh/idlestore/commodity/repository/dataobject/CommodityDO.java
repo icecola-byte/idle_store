@@ -29,7 +29,7 @@ public class CommodityDO {
     private String communityId;
 
     @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<String> imageUrls;
+    private List<Long> imageFileIds;
 
     private BigDecimal price;
 

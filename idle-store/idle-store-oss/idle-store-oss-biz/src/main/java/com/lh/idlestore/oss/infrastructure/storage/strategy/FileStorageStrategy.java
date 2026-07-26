@@ -7,9 +7,14 @@ import org.springframework.web.multipart.MultipartFile;
  **/
 public interface FileStorageStrategy {
 
-    /**
-     * 文件上传
-     */
-    String uploadFile(MultipartFile file, String bucketName);
+    String getStorageProvider();
+
+    String getDefaultBucketName();
+
+    void uploadFile(MultipartFile file, String bucketName, String objectKey);
+
+    String getAccessUrl(String bucketName, String objectKey);
+
+    void deleteFile(String bucketName, String objectKey);
 
 }

@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -49,9 +48,9 @@ public class UserDO {
     private String communityId;
 
     /**
-     * 头像URL
+     * 头像文件 ID，由 OSS 服务维护文件元数据。
      */
-    private String avatarUrl;
+    private Long avatarFileId;
 
 
     /**
