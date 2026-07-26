@@ -22,7 +22,8 @@
     <update id="markSent">
         UPDATE t_commodity_outbox
         SET event_status = 1,
-        sent_time = #{sentTime}
+        sent_time = #{sentTime},
+        update_time = NOW()
         WHERE event_id = #{eventId}
         AND event_status IN (0, 2)
     </update>
@@ -31,7 +32,8 @@
         UPDATE t_commodity_outbox
         SET event_status = 2,
         retry_count = retry_count + 1,
-        next_retry_time = #{nextRetryTime}
+        next_retry_time = #{nextRetryTime},
+        update_time = NOW()
         WHERE event_id = #{eventId}
         AND event_status IN (0, 2)
     </update>

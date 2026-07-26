@@ -2,8 +2,8 @@ package com.lh.idlestore.commodity.controller;
 
 import com.lh.framework.biz.operationlog.annotation.ApiOperationLog;
 import com.lh.framework.common.response.Response;
-import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryResponse;
-import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeResponse;
+import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryRespVO;
+import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeRespVO;
 import com.lh.idlestore.commodity.service.CommodityCategoryService;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +25,8 @@ public class CommodityCategoryController {
      */
     @GetMapping("/{parentId}/children")
     @ApiOperationLog("查询商品分类子类")
-    public Response<List<CommodityCategoryResponse>> listChildrenByParentId(@PathVariable("parentId") Long parentId) {
-        List<CommodityCategoryResponse> result = commodityCategoryService.getChildrenByParentId(parentId);
+    public Response<List<CommodityCategoryRespVO>> listChildrenByParentId(@PathVariable("parentId") Long parentId) {
+        List<CommodityCategoryRespVO> result = commodityCategoryService.getChildrenByParentId(parentId);
 
         return Response.success(result);
     }
@@ -36,8 +36,8 @@ public class CommodityCategoryController {
      * 查询商品分类
      */
     @GetMapping("/tree")
-    public Response<List<CommodityCategoryTreeResponse>> listTree() {
-        List<CommodityCategoryTreeResponse> result = commodityCategoryService.getCommodityCategoryTree();
+    public Response<List<CommodityCategoryTreeRespVO>> listTree() {
+        List<CommodityCategoryTreeRespVO> result = commodityCategoryService.getCommodityCategoryTree();
 
         return Response.success(result);
     }

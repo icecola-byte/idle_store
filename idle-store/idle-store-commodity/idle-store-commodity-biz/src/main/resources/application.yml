@@ -22,3 +22,10 @@ cache:
       commodityCategoryList:
         maximum-size: 1
         expire-after-write-seconds: 1800
+
+commodity:
+  outbox:
+    publish-delay: 1s
+  cache:
+    category:
+      delayed-invalidation-delay: 3s

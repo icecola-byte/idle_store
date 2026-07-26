@@ -3,18 +3,19 @@ package com.lh.idlestore.commodity.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.lh.framework.common.exception.BizException;
 import com.lh.framework.common.util.JsonUtils;
-import com.lh.idlestore.commodity.constant.CommodityConstants;
-import com.lh.idlestore.commodity.enums.CommodityOutboxStatusEnum;
+import com.lh.idlestore.commodity.infrastructure.cache.config.CommodityCategoryCacheProperties;
+import com.lh.idlestore.commodity.infrastructure.outbox.constant.CommodityOutboxConstants;
+import com.lh.idlestore.commodity.infrastructure.outbox.enums.CommodityAggregateTypeEnum;
+import com.lh.idlestore.commodity.infrastructure.outbox.enums.CommodityEventTypeEnum;
+import com.lh.idlestore.commodity.infrastructure.outbox.enums.CommodityOutboxStatusEnum;
 import com.lh.idlestore.commodity.enums.CommodityResponseCodeEnum;
 import com.lh.idlestore.commodity.infrastructure.cache.dto.CommodityCategoryCacheDTO;
 import com.lh.idlestore.commodity.infrastructure.cache.local.CommodityCategoryLocalCache;
 import com.lh.idlestore.commodity.infrastructure.cache.redis.CommodityCategoryRedisCache;
 import com.lh.idlestore.commodity.model.converter.CommodityCategoryConverter;
-import com.lh.idlestore.commodity.model.event.CommodityAggregateTypeEnum;
-import com.lh.idlestore.commodity.model.event.CommodityCategoryCacheInvalidatedEvent;
-import com.lh.idlestore.commodity.model.event.CommodityEventTypeEnum;
-import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryResponse;
-import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeResponse;
+import com.lh.idlestore.commodity.mq.event.CommodityCategoryCacheInvalidatedEvent;
+import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryRespVO;
+import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeRespVO;
 import com.lh.idlestore.commodity.remote.DistributedIdGeneratorRemoteService;
 import com.lh.idlestore.commodity.repository.dataobject.CommodityCategoryDO;
 import com.lh.idlestore.commodity.repository.dataobject.CommodityOutboxDO;
@@ -22,7 +23,6 @@ import com.lh.idlestore.commodity.repository.mapper.CommodityCategoryMapper;
 import com.lh.idlestore.commodity.repository.mapper.CommodityMapper;
 import com.lh.idlestore.commodity.repository.mapper.CommodityOutboxMapper;
 import com.lh.idlestore.commodity.service.CommodityCategoryService;
-import com.lh.idlestore.distributed.id.generator.constant.DistributedIdGeneratorApiConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,15 +53,17 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
 
     private final DistributedIdGeneratorRemoteService idGenerator;
 
+    private final CommodityCategoryCacheProperties commodityCategoryCacheProperties;
+
 
     @Override
-    public List<CommodityCategoryTreeResponse> getCommodityCategoryTree() {
+    public List<CommodityCategoryTreeRespVO> getCommodityCategoryTree() {
         List<CommodityCategoryCacheDTO> categories = getCategoriesFromCacheOrDb();
         return buildCategoryTree(categories);
     }
 
     @Override
-    public List<CommodityCategoryResponse> getChildrenByParentId(Long parentId) {
+    public List<CommodityCategoryRespVO> getChildrenByParentId(Long parentId) {
         if (parentId == null) {
             return List.of();
         }
@@ -100,7 +102,14 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
         }
         // 删除商品分类 ID
         commodityCategoryMapper.logicalDeleteByIds(subtreeIds);
-        Long eventId = idGenerator.nextId(CommodityConstants.OUTBOX_EVENT_ID_KEY);
+        LocalDateTime now = LocalDateTime.now();
+        appendCacheInvalidationOutbox(categoryId, now);
+        appendCacheInvalidationOutbox(categoryId, now.plus(commodityCategoryCacheProperties.getDelayedInvalidationDelay()));
+
+    }
+
+    private void appendCacheInvalidationOutbox(Long categoryId, LocalDateTime sendTime) {
+        Long eventId = idGenerator.nextId(CommodityOutboxConstants.OUTBOX_EVENT_ID_KEY);
         LocalDateTime now = LocalDateTime.now();
         commodityOutboxMapper.insert(CommodityOutboxDO.builder()
                 .eventId(eventId)
@@ -114,11 +123,12 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
                                 .eventId(eventId)
                                 .build()
                 ))
-                .nextRetryTime(now)
+                .nextRetryTime(sendTime) // 首次发送时间
                 .createTime(now)
                 .updateTime(now)
                 .build());
     }
+
 
     /**
      * 从本地缓存、Redis 或 DB 获取启用分类平铺列表。
@@ -170,7 +180,7 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
         }
     }
 
-    private List<CommodityCategoryTreeResponse> buildCategoryTree(
+    private List<CommodityCategoryTreeRespVO> buildCategoryTree(
             List<CommodityCategoryCacheDTO> categories) {
         Map<Long, List<CommodityCategoryCacheDTO>> categoryMap =
                 categories.stream()
@@ -181,14 +191,14 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
         return buildCategoryTree(ROOT_ID, categoryMap);
     }
 
-    private List<CommodityCategoryTreeResponse> buildCategoryTree(
+    private List<CommodityCategoryTreeRespVO> buildCategoryTree(
             Long parentId,
             Map<Long, List<CommodityCategoryCacheDTO>> categoryMap) {
 
         return categoryMap.getOrDefault(parentId, List.of())
                 .stream()
                 .map(category -> {
-                    CommodityCategoryTreeResponse response =
+                    CommodityCategoryTreeRespVO response =
                             commodityCategoryConverter.toTreeResponse(category);
 
                     response.setChildren(buildCategoryTree(

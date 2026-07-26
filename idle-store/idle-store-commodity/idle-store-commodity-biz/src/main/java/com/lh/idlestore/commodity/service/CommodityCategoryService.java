@@ -1,7 +1,7 @@
 package com.lh.idlestore.commodity.service;
 
-import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryResponse;
-import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeResponse;
+import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryRespVO;
+import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeRespVO;
 
 import java.util.List;
 
@@ -11,14 +11,14 @@ public interface CommodityCategoryService {
      * 查询完整的商品类别分类树
      * @return 商品分类树(已排序)
      */
-    List<CommodityCategoryTreeResponse> getCommodityCategoryTree();
+    List<CommodityCategoryTreeRespVO> getCommodityCategoryTree();
 
     /**
      * 查询某个分类下的类别
      * @param parentId 该分类 Id
      * @return
      */
-    List<CommodityCategoryResponse> getChildrenByParentId(Long parentId);
+    List<CommodityCategoryRespVO> getChildrenByParentId(Long parentId);
 
     /**
      * 删除某个商品分类(子分类也会被删除)

@@ -1,8 +1,8 @@
 package com.lh.idlestore.commodity.model.converter;
 
 import com.lh.idlestore.commodity.infrastructure.cache.dto.CommodityCategoryCacheDTO;
-import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryResponse;
-import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeResponse;
+import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryRespVO;
+import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeRespVO;
 import com.lh.idlestore.commodity.repository.dataobject.CommodityCategoryDO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
@@ -26,19 +26,19 @@ public class CommodityCategoryConverter {
                 .toList();
     }
 
-    public CommodityCategoryResponse toResponse(
+    public CommodityCategoryRespVO toResponse(
             CommodityCategoryCacheDTO cacheDTO) {
 
-        CommodityCategoryResponse response = new CommodityCategoryResponse();
+        CommodityCategoryRespVO response = new CommodityCategoryRespVO();
         BeanUtils.copyProperties(cacheDTO, response);
         return response;
     }
 
-    public CommodityCategoryTreeResponse toTreeResponse(
+    public CommodityCategoryTreeRespVO toTreeResponse(
             CommodityCategoryCacheDTO cacheDTO) {
 
-        CommodityCategoryTreeResponse response =
-                new CommodityCategoryTreeResponse();
+        CommodityCategoryTreeRespVO response =
+                new CommodityCategoryTreeRespVO();
 
         BeanUtils.copyProperties(cacheDTO, response);
         response.setChildren(List.of());

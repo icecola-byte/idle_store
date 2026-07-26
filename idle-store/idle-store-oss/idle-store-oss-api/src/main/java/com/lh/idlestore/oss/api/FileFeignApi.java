@@ -1,6 +1,6 @@
 package com.lh.idlestore.oss.api;
 
-import com.lh.idlestore.oss.config.FeignFormConfiguration;
+import com.lh.idlestore.oss.api.config.FeignFormConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
