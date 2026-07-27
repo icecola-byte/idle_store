@@ -10,8 +10,68 @@
         ORDER BY parent_id ASC, sort_order ASC, category_id ASC
     </select>
 
-    <!-- 查询该分类及全部子孙分类 ID -->
-    <select id="findSubtreeIds" resultType="java.lang.Long">
+    <!-- 批量逻辑删除分类及其全部子分类 -->
+    <update id="logicalDeleteByIds">
+        UPDATE t_commodity_category
+        SET is_deleted = 1,
+        update_time = NOW()
+        WHERE is_deleted = 0
+        AND category_id IN
+        <foreach collection="categoryIds" item="categoryId"
+                 open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </update>
+
+    <!--
+        商品绑定分类时使用共享锁。分类删除或禁用会申请排他锁，
+        因而会与“校验分类路径 + 保存商品”的同一事务正确互斥。
+    -->
+    <select id="selectPathForShare" resultType="commodityCategoryDO">
+        WITH RECURSIVE category_path AS (
+        SELECT category_id, parent_id
+        FROM t_commodity_category
+        WHERE category_id = #{categoryId}
+
+        UNION ALL
+
+        SELECT parent.category_id, parent.parent_id
+        FROM t_commodity_category parent
+        INNER JOIN category_path child
+        ON child.parent_id = parent.category_id
+        WHERE child.parent_id != 0
+        )
+        SELECT category.category_id,
+               category.parent_id,
+               category.status,
+               category.is_deleted
+        FROM t_commodity_category category
+        INNER JOIN category_path path
+        ON path.category_id = category.category_id
+        ORDER BY category.category_id ASC
+        FOR SHARE
+    </select>
+
+    <!-- 分类更新或删除根节点时使用的排他锁。 -->
+    <select id="selectByIdForUpdate" resultType="commodityCategoryDO">
+        SELECT category_id,
+               parent_id,
+               category_name,
+               icon_file_id,
+               sort_order,
+               status,
+               is_deleted
+        FROM t_commodity_category
+        WHERE category_id = #{categoryId}
+        AND is_deleted = 0
+        FOR UPDATE
+    </select>
+
+    <!--
+        从真实分类表读取并加排他锁，而不是只锁递归 CTE 的临时结果。
+        固定排序能降低并发删除相交子树时的死锁概率。
+    -->
+    <select id="selectSubtreeForUpdate" resultType="commodityCategoryDO">
         WITH RECURSIVE category_tree AS (
         SELECT category_id
         FROM t_commodity_category
@@ -26,32 +86,18 @@
         ON child.parent_id = parent.category_id
         WHERE child.is_deleted = 0
         )
-        SELECT category_id
-        FROM category_tree
+        SELECT category.category_id,
+               category.parent_id,
+               category.category_name,
+               category.icon_file_id,
+               category.sort_order,
+               category.status,
+               category.is_deleted
+        FROM t_commodity_category category
+        INNER JOIN category_tree tree
+        ON tree.category_id = category.category_id
+        WHERE category.is_deleted = 0
+        ORDER BY category.category_id ASC
+        FOR UPDATE
     </select>
-
-    <!-- 批量逻辑删除分类及其全部子分类 -->
-    <update id="logicalDeleteByIds">
-        UPDATE t_commodity_category
-        SET is_deleted = 1,
-        update_time = NOW()
-        WHERE is_deleted = 0
-        AND category_id IN
-        <foreach collection="categoryIds" item="categoryId"
-                 open="(" separator="," close=")">
-            #{categoryId}
-        </foreach>
-    </update>
-
-    <select id="selectIconFileIdsByIds" resultType="java.lang.Long">
-        SELECT icon_file_id
-        FROM t_commodity_category
-        WHERE is_deleted = 0
-        AND icon_file_id IS NOT NULL
-        AND category_id IN
-        <foreach collection="subtreeIds" item="categoryId" open="(" separator="," close=")">
-            #{categoryId}
-        </foreach>
-    </select>
-
 </mapper>

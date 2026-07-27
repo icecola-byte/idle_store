@@ -13,10 +13,23 @@ public interface CommodityCategoryMapper extends BaseMapper<CommodityCategoryDO>
 
     List<CommodityCategoryDO> queryEnabledCommodityCategories();
 
-    List<Long> findSubtreeIds(@Param("categoryId") Long categoryId);
-
     int logicalDeleteByIds(@Param("categoryIds") List<Long> categoryIds);
 
-    List<Long> selectIconFileIdsByIds(@Param("subtreeIds") List<Long> subtreeIds);
+    /**
+     * 锁住指定分类到虚拟根节点的整条路径。
+     * 商品发布、修改商品分类、新增子分类时使用。
+     * 必须在事务内调用，否则数据库行锁会在语句结束后立即释放。
+     */
+    List<CommodityCategoryDO> selectPathForShare(@Param("categoryId") Long categoryId);
 
+    /**
+     * 锁住一个分类行。分类更新、删除分类树的根节点时使用。
+     */
+    CommodityCategoryDO selectByIdForUpdate(@Param("categoryId") Long categoryId);
+
+    /**
+     * 锁住某个分类及其全部子孙分类，结果按分类 ID 排序以降低死锁概率。
+     * 删除分类树时使用。
+     */
+    List<CommodityCategoryDO> selectSubtreeForUpdate(@Param("categoryId") Long categoryId);
 }
