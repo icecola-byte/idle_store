@@ -41,4 +41,6 @@ public class CommodityCategoryDO {
 
     @TableLogic
     private Boolean isDeleted;
+
+    private Integer version;
 }

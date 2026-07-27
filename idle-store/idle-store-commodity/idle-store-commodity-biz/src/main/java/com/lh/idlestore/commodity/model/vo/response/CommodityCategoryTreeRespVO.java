@@ -13,5 +13,7 @@ public class CommodityCategoryTreeRespVO {
 
     private String iconUrl;
 
+    private Integer version;
+
     private List<CommodityCategoryTreeRespVO> children;
 }

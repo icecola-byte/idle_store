@@ -14,4 +14,13 @@ public interface CommodityCategoryBindingGuard {
      * @param categoryId 要绑定的分类 ID
      */
     void checkCategoryCanBind(Long categoryId);
+
+    /**
+     * 对目标分类到根分类的路径加共享锁，校验整条路径可用且目标分类版本未变化。
+     * 商品发布或修改商品分类时使用。
+     *
+     * @param categoryId 要绑定的分类 ID
+     * @param expectedVersion 用户选择分类时看到的版本号
+     */
+    void checkCategoryCanBind(Long categoryId, Integer expectedVersion);
 }

@@ -10,4 +10,6 @@ public class CommodityCategoryRespVO {
     private String categoryName;
 
     private String iconUrl;
+
+    private Integer version;
 }

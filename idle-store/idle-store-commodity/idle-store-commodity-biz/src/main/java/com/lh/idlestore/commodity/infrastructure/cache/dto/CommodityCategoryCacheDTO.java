@@ -14,4 +14,6 @@ public class CommodityCategoryCacheDTO {
     private String iconUrl;
 
     private Integer sortOrder;
+
+    private Integer version;
 }

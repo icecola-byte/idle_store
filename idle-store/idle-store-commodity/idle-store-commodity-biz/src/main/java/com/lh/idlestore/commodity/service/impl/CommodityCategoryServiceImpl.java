@@ -162,6 +162,7 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
                 }
 
                 boolean needUpdate = false;
+                boolean categoryInformationChanged = false;
                 CommodityCategoryDO updateCommodityCategoryDO = new CommodityCategoryDO();
                 updateCommodityCategoryDO.setCategoryId(categoryId);
 
@@ -172,6 +173,7 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
                             CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage());
                     updateCommodityCategoryDO.setCategoryName(categoryName);
                     needUpdate = true;
+                    categoryInformationChanged = true;
                 }
 
                 Integer sortOrder = categoryReqVO.getSortOrder();
@@ -191,6 +193,7 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
                     // 只更新父分类本身；子分类保留各自原有状态。
                     updateCommodityCategoryDO.setStatus(CategoryStatusEnum.fromCode(status));
                     needUpdate = true;
+                    categoryInformationChanged = true;
                 }
 
                 if (uploadedIconFileId != null) {
@@ -202,6 +205,10 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
                 }
 
                 updateCommodityCategoryDO.setUpdateTime(LocalDateTime.now());
+                // 排序、图标不影响选择哪个分类，不更新版本号
+                if (categoryInformationChanged) {
+                    updateCommodityCategoryDO.setVersion(commodityCategoryDO.getVersion() + 1);
+                }
                 int updatedRows = commodityCategoryMapper.updateById(updateCommodityCategoryDO);
                 if (updatedRows != 1) {
                     throw new BizException(CommodityResponseCodeEnum.CATEGORY_NOT_FOUND);
@@ -247,6 +254,7 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
                         .sortOrder(categoryReqVO.getSortOrder() == null ? 0 : categoryReqVO.getSortOrder())
                         .iconFileId(newIconFileId)
                         .status(CategoryStatusEnum.ENABLED)
+                        .version(1)
                         .build();
                 commodityCategoryMapper.insert(newCommodityCategory);
                 LocalDateTime now = LocalDateTime.now();

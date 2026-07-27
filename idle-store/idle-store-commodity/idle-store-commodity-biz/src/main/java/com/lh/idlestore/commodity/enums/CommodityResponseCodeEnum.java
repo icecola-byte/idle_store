@@ -17,6 +17,7 @@ public enum CommodityResponseCodeEnum implements BaseExceptionInterface {
     PARENT_CATEGORY_NOT_FOUND("COMMODITY-20006", "父分类不存在"),
     PARENT_CATEGORY_DISABLED("COMMODITY-20007", "父分类已被禁用"),
     CATEGORY_NOT_AVAILABLE("COMMODITY-20008", "商品分类不可用"),
+    CATEGORY_VERSION_CHANGED("COMMODITY-20009", "商品分类信息已变更，请刷新后重新选择"),
 
     // ----------- 远程调用异常状态码 --------
     OSS_SERVICE_CALL_FAILED("COMMODITY-30001", "文件服务调用失败"),

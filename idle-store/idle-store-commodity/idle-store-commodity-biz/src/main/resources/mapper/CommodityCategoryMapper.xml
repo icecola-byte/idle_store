@@ -4,7 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lh.idlestore.commodity.repository.mapper.CommodityCategoryMapper">
     <select id="queryEnabledCommodityCategories" resultType="commodityCategoryDO">
-        SELECT category_id, parent_id, category_name, icon_file_id, sort_order
+        SELECT category_id, parent_id, category_name, icon_file_id, sort_order, version
         FROM t_commodity_category
         WHERE status = 1 AND is_deleted = 0
         ORDER BY parent_id ASC, sort_order ASC, category_id ASC
@@ -29,21 +29,22 @@
     -->
     <select id="selectPathForShare" resultType="commodityCategoryDO">
         WITH RECURSIVE category_path AS (
-        SELECT category_id, parent_id
-        FROM t_commodity_category
-        WHERE category_id = #{categoryId}
+            SELECT category_id, parent_id
+            FROM t_commodity_category
+            WHERE category_id = #{categoryId}
 
-        UNION ALL
+            UNION ALL
 
-        SELECT parent.category_id, parent.parent_id
-        FROM t_commodity_category parent
-        INNER JOIN category_path child
-        ON child.parent_id = parent.category_id
-        WHERE child.parent_id != 0
+            SELECT parent.category_id, parent.parent_id
+            FROM t_commodity_category parent
+            INNER JOIN category_path child
+            ON child.parent_id = parent.category_id
+            WHERE child.parent_id != 0
         )
         SELECT category.category_id,
                category.parent_id,
                category.status,
+               category.version,
                category.is_deleted
         FROM t_commodity_category category
         INNER JOIN category_path path
@@ -60,6 +61,7 @@
                icon_file_id,
                sort_order,
                status,
+               version,
                is_deleted
         FROM t_commodity_category
         WHERE category_id = #{categoryId}
