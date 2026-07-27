@@ -20,6 +20,7 @@ import com.lh.idlestore.commodity.model.vo.request.UpdateCommodityCategoryReqVO;
 import com.lh.idlestore.commodity.mq.event.CommodityCategoryCacheInvalidatedEvent;
 import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryRespVO;
 import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeRespVO;
+import com.lh.idlestore.commodity.mq.event.CommodityCategoryIconFileDeleteRequestEvent;
 import com.lh.idlestore.commodity.remote.DistributedIdGeneratorRemoteService;
 import com.lh.idlestore.commodity.remote.OssRemoteService;
 import com.lh.idlestore.commodity.repository.dataobject.CommodityCategoryDO;
@@ -30,8 +31,11 @@ import com.lh.idlestore.commodity.repository.mapper.CommodityOutboxMapper;
 import com.lh.idlestore.commodity.service.CommodityCategoryService;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -44,6 +48,7 @@ import static com.lh.idlestore.commodity.constant.CommodityCategoryConstants.ROO
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CommodityCategoryServiceImpl implements CommodityCategoryService {
 
     private final CommodityCategoryMapper commodityCategoryMapper;
@@ -63,6 +68,8 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
     private final CommodityCategoryCacheProperties commodityCategoryCacheProperties;
 
     private final OssRemoteService ossRemoteService;
+
+    private final TransactionTemplate transactionTemplate;
 
 
     @Override
@@ -109,16 +116,21 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
         if (commodityCount > 0) {
             throw new BizException(CommodityResponseCodeEnum.CATEGORY_CONTAINS_COMMODITY);
         }
-        // 删除商品分类 ID
+        // 删除商品分类
+        List<Long> iconFileIds = commodityCategoryMapper.selectIconFileIdsByIds(subtreeIds);
         commodityCategoryMapper.logicalDeleteByIds(subtreeIds);
         LocalDateTime now = LocalDateTime.now();
         appendCacheInvalidationOutbox(categoryId, now);
         appendCacheInvalidationOutbox(categoryId, now.plus(commodityCategoryCacheProperties.getDelayedInvalidationDelay()));
+        // 批量清除
+        if (CollUtil.isNotEmpty(iconFileIds)) {
+            // TODO: 每个图片都是一条 OUTBOX，当分类涉及大批量时或者删除造成瓶颈时可转为批量修改
+            iconFileIds.forEach(iconFileId -> appendIconFileDeleteOutbox(categoryId, iconFileId));
+        }
 
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void updateCategoryById(UpdateCommodityCategoryReqVO categoryReqVO) {
         // 先看分类是否存在
         CommodityCategoryDO commodityCategoryDO = commodityCategoryMapper.selectById(categoryReqVO.getCategoryId());
@@ -157,18 +169,92 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
 
         // icon 图标
         MultipartFile iconFile = categoryReqVO.getIconFile();
+        Long invalidIconFileId = null;
+        Long newIconFileId = null;
         if (iconFile != null && !iconFile.isEmpty()) {
-            Long fileId = ossRemoteService.uploadFile(iconFile).fileId();
-            updateCommodityCategoryDO.setIconFileId(fileId);
+            newIconFileId = ossRemoteService.uploadFile(iconFile).fileId();
+            invalidIconFileId = commodityCategoryDO.getIconFileId();
+            updateCommodityCategoryDO.setIconFileId(newIconFileId);
             needUpdate = true;
         }
 
-        if (needUpdate) {
-            commodityCategoryMapper.updateById(updateCommodityCategoryDO);
-            LocalDateTime now = LocalDateTime.now();
-            appendCacheInvalidationOutbox(categoryId, now);
-            appendCacheInvalidationOutbox(categoryId, now.plus(commodityCategoryCacheProperties.getDelayedInvalidationDelay()));
+        if (!needUpdate) {
+            return ;
         }
+
+
+        final Long oldIconFileId = invalidIconFileId;
+        // 在同一事务中更新分类，并写入缓存失效、旧图标删除事件
+        try {
+            transactionTemplate.executeWithoutResult(transactionStatus -> {
+                int updatedRows = commodityCategoryMapper.updateById(updateCommodityCategoryDO);
+                // 防止在更新时已经被删除了，后续的 outbox 事件应该停止
+                if (updatedRows != 1) {
+                    throw new BizException(CommodityResponseCodeEnum.CATEGORY_NOT_FOUND);
+                }
+
+                LocalDateTime now = LocalDateTime.now();
+                appendCacheInvalidationOutbox(categoryId, now);
+                appendCacheInvalidationOutbox(categoryId, now.plus(commodityCategoryCacheProperties.getDelayedInvalidationDelay()));
+
+                if (oldIconFileId != null) {
+                    appendIconFileDeleteOutbox(categoryId, oldIconFileId);
+                }
+            });
+        } catch (DataIntegrityViolationException e) {
+            appendNewIconCleanupOutbox(categoryId, newIconFileId);
+            throw new BizException(CommodityResponseCodeEnum.CATEGORY_NAME_ALREADY_EXISTS);
+        } catch (RuntimeException e) {
+            appendNewIconCleanupOutbox(categoryId, newIconFileId);
+            throw e;
+        }
+
+    }
+
+    private void appendNewIconCleanupOutbox(
+            Long categoryId,
+            Long newIconFileId) {
+
+        if (newIconFileId == null) {
+            return;
+        }
+
+        try {
+            appendIconFileDeleteOutbox(categoryId, newIconFileId);
+        } catch (Exception cleanupException) {
+            log.error(
+                    "分类更新失败后写入新图标删除任务失败，fileId={}",
+                    newIconFileId,
+                    cleanupException
+            );
+        }
+    }
+
+    /**
+     * 写入分类图标文件删除请求
+     * @param categoryId 商品分类 ID
+     * @param fileId IconFileId
+     */
+    private void appendIconFileDeleteOutbox(Long categoryId, Long fileId) {
+        Long eventId = idGenerator.nextId(CommodityOutboxConstants.OUTBOX_EVENT_ID_KEY);
+        LocalDateTime now = LocalDateTime.now();
+        commodityOutboxMapper.insert(CommodityOutboxDO.builder()
+                .eventId(eventId)
+                .aggregateType(CommodityAggregateTypeEnum.CATEGORY)
+                .aggregateId(categoryId)
+                .eventType(CommodityEventTypeEnum.CATEGORY_ICON_FILE_DELETE_REQUEST)
+                .eventStatus(CommodityOutboxStatusEnum.PENDING)
+                .retryCount(0)
+                .eventPayload(JsonUtils.toJsonString(
+                        CommodityCategoryIconFileDeleteRequestEvent.builder()
+                                .eventId(eventId)
+                                .fileId(fileId)
+                                .build()
+                ))
+                .nextRetryTime(now) // 首次发送时间
+                .createTime(now)
+                .updateTime(now)
+                .build());
     }
 
     private void appendCacheInvalidationOutbox(Long categoryId, LocalDateTime sendTime) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -31,7 +32,11 @@ public class CommodityCategoryConverter {
 
     public List<CommodityCategoryCacheDTO> toCacheDTOList(
             List<CommodityCategoryDO> categories) {
-        List<Long> iconFileIds = categories.stream().map(CommodityCategoryDO::getIconFileId).toList();
+        List<Long> iconFileIds = categories.stream()
+                .map(CommodityCategoryDO::getIconFileId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
         Map<Long, String> accessUrls = ossRemoteService.getAccessUrls(iconFileIds);
 
         return categories.stream()

@@ -49,4 +49,16 @@ public class OssRemoteService {
         }
     }
 
+    public void deleteFile(Long fileId) {
+        try {
+            remoteCallExecutor.execute(
+                    OssApiConstants.SERVICE_NAME,
+                    OssApiConstants.OPERATION_DELETE_FILE,
+                    () -> fileFeignApi.deleteFile(fileId)
+            );
+        } catch (RemoteCallException exception) {
+            throw new BizException(CommodityResponseCodeEnum.OSS_SERVICE_CALL_FAILED);
+        }
+    }
+
 }

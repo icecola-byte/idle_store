@@ -10,6 +10,8 @@ public final class OssApiConstants {
 
     public static final String OPERATION_GET_ACCESS_URLS = "getAccessUrls";
 
+    public static final String OPERATION_DELETE_FILE = "deleteFile";
+
     private OssApiConstants() {
     }
 }

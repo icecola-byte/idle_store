@@ -14,6 +14,11 @@ public enum CommodityEventTypeEnum {
     CATEGORY_CACHE_INVALIDATED(
             "CATEGORY_CACHE_INVALIDATED",
             "商品分类缓存失效"
+    ),
+
+    CATEGORY_ICON_FILE_DELETE_REQUEST(
+            "CATEGORY_ICON_FILE_DELETE_REQUEST",
+                    "商品分类旧图清除"
     );
 
     @EnumValue

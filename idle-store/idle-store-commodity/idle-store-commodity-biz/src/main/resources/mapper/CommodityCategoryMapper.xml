@@ -42,4 +42,15 @@
             #{categoryId}
         </foreach>
     </update>
+
+    <select id="selectIconFileIdsByIds" resultType="java.lang.Long">
+        SELECT icon_file_id
+        FROM t_commodity_category
+        WHERE is_deleted = 0
+        AND icon_file_id IS NOT NULL
+        AND category_id IN
+        <foreach collection="subtreeIds" item="categoryId" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </select>
 </mapper>
