@@ -2,6 +2,7 @@ package com.lh.idlestore.commodity.controller;
 
 import com.lh.framework.biz.operationlog.annotation.ApiOperationLog;
 import com.lh.framework.common.response.Response;
+import com.lh.idlestore.commodity.model.vo.request.InsertCommodityCategoryReqVO;
 import com.lh.idlestore.commodity.model.vo.request.UpdateCommodityCategoryReqVO;
 import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryRespVO;
 import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeRespVO;
@@ -62,10 +63,21 @@ public class CommodityCategoryController {
     /**
      * 更新某个商品分类
      */
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperationLog("更新某商品分类")
     public Response<Void> updateCategoryInfo(@Validated @ModelAttribute UpdateCommodityCategoryReqVO categoryReqVO) {
         commodityCategoryService.updateCategoryById(categoryReqVO);
+
+        return Response.success();
+    }
+
+    /**
+     * 新增商品分类
+     */
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiOperationLog("添加商品分类")
+    public Response<Void> insertCategory(@Validated @ModelAttribute InsertCommodityCategoryReqVO categoryReqVO) {
+        commodityCategoryService.insertCategory(categoryReqVO);
 
         return Response.success();
     }

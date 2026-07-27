@@ -1,5 +1,6 @@
 package com.lh.idlestore.commodity.service;
 
+import com.lh.idlestore.commodity.model.vo.request.InsertCommodityCategoryReqVO;
 import com.lh.idlestore.commodity.model.vo.request.UpdateCommodityCategoryReqVO;
 import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryRespVO;
 import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryTreeRespVO;
@@ -28,5 +29,13 @@ public interface CommodityCategoryService {
      */
     void deleteCategoryTree(Long categoryId);
 
+    /**
+     * 更新商品分类
+     */
     void updateCategoryById(UpdateCommodityCategoryReqVO categoryReqVO);
+
+    /**
+     * 添加商品分类
+     */
+    void insertCategory(InsertCommodityCategoryReqVO categoryReqVO);
 }

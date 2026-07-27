@@ -18,4 +18,5 @@ public interface CommodityCategoryMapper extends BaseMapper<CommodityCategoryDO>
     int logicalDeleteByIds(@Param("categoryIds") List<Long> categoryIds);
 
     List<Long> selectIconFileIdsByIds(@Param("subtreeIds") List<Long> subtreeIds);
+
 }

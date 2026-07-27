@@ -7,6 +7,7 @@ import com.lh.framework.common.util.JsonUtils;
 import com.lh.framework.web.enums.CommonResponseCodeEnum;
 import com.lh.idlestore.commodity.enums.CategoryStatusEnum;
 import com.lh.idlestore.commodity.infrastructure.cache.config.CommodityCategoryCacheProperties;
+import com.lh.idlestore.commodity.infrastructure.lock.CommodityCategoryLockKeys;
 import com.lh.idlestore.commodity.infrastructure.outbox.constant.CommodityOutboxConstants;
 import com.lh.idlestore.commodity.infrastructure.outbox.enums.CommodityAggregateTypeEnum;
 import com.lh.idlestore.commodity.infrastructure.outbox.enums.CommodityEventTypeEnum;
@@ -16,6 +17,7 @@ import com.lh.idlestore.commodity.infrastructure.cache.dto.CommodityCategoryCach
 import com.lh.idlestore.commodity.infrastructure.cache.local.CommodityCategoryLocalCache;
 import com.lh.idlestore.commodity.infrastructure.cache.redis.CommodityCategoryRedisCache;
 import com.lh.idlestore.commodity.model.converter.CommodityCategoryConverter;
+import com.lh.idlestore.commodity.model.vo.request.InsertCommodityCategoryReqVO;
 import com.lh.idlestore.commodity.model.vo.request.UpdateCommodityCategoryReqVO;
 import com.lh.idlestore.commodity.mq.event.CommodityCategoryCacheInvalidatedEvent;
 import com.lh.idlestore.commodity.model.vo.response.CommodityCategoryRespVO;
@@ -32,9 +34,11 @@ import com.lh.idlestore.commodity.service.CommodityCategoryService;
 import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +46,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.lh.idlestore.commodity.constant.CommodityCategoryConstants.ROOT_ID;
@@ -71,6 +76,8 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
 
     private final TransactionTemplate transactionTemplate;
 
+    private final RedissonClient redissonClient;
+
 
     @Override
     public List<CommodityCategoryTreeRespVO> getCommodityCategoryTree() {
@@ -98,95 +105,132 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void deleteCategoryTree(Long categoryId) {
         // 不能为根
         if (ROOT_ID.equals(categoryId)) {
             throw new BizException(CommodityResponseCodeEnum.ROOT_CATEGORY_CANNOT_DELETE);
         }
 
-        // 判断分类是否存在，同时递归查询子分类
-        List<Long> subtreeIds = commodityCategoryMapper.findSubtreeIds(categoryId);
-        if (CollUtil.isEmpty(subtreeIds)) {
-            throw new BizException(CommodityResponseCodeEnum.CATEGORY_NOT_FOUND);
-        }
+        RLock lock = redissonClient.getLock(CommodityCategoryLockKeys.CATEGORY_STRUCTURE_WRITE_LOCK);
 
-        // 分类存在，查看该分类下是否有商品
-        long commodityCount = commodityMapper.countActiveCommoditiesByCategoryIds(subtreeIds);
-        if (commodityCount > 0) {
-            throw new BizException(CommodityResponseCodeEnum.CATEGORY_CONTAINS_COMMODITY);
-        }
-        // 删除商品分类
-        List<Long> iconFileIds = commodityCategoryMapper.selectIconFileIdsByIds(subtreeIds);
-        commodityCategoryMapper.logicalDeleteByIds(subtreeIds);
-        LocalDateTime now = LocalDateTime.now();
-        appendCacheInvalidationOutbox(categoryId, now);
-        appendCacheInvalidationOutbox(categoryId, now.plus(commodityCategoryCacheProperties.getDelayedInvalidationDelay()));
-        // 批量清除
-        if (CollUtil.isNotEmpty(iconFileIds)) {
-            // TODO: 每个图片都是一条 OUTBOX，当分类涉及大批量时或者删除造成瓶颈时可转为批量修改
-            iconFileIds.forEach(iconFileId -> appendIconFileDeleteOutbox(categoryId, iconFileId));
-        }
+        boolean locked = false;
+        try {
+            locked = lock.tryLock(3, TimeUnit.SECONDS);
+            if (!locked) {
+                throw new BizException(CommodityResponseCodeEnum.CATEGORY_OPERATION_BUSY);
+            }
 
+            transactionTemplate.executeWithoutResult(status -> {
+                // 判断分类是否存在，同时递归查询子分类
+                List<Long> subtreeIds = commodityCategoryMapper.findSubtreeIds(categoryId);
+                if (CollUtil.isEmpty(subtreeIds)) {
+                    throw new BizException(CommodityResponseCodeEnum.CATEGORY_NOT_FOUND);
+                }
+
+                // 分类存在，查看该分类下是否有商品
+                long commodityCount = commodityMapper.countActiveCommoditiesByCategoryIds(subtreeIds);
+                if (commodityCount > 0) {
+                    throw new BizException(CommodityResponseCodeEnum.CATEGORY_CONTAINS_COMMODITY);
+                }
+                // 删除商品分类
+                List<Long> iconFileIds = commodityCategoryMapper.selectIconFileIdsByIds(subtreeIds);
+                commodityCategoryMapper.logicalDeleteByIds(subtreeIds);
+                LocalDateTime now = LocalDateTime.now();
+                appendCacheInvalidationOutbox(categoryId, now);
+                appendCacheInvalidationOutbox(categoryId, now.plus(commodityCategoryCacheProperties.getDelayedInvalidationDelay()));
+                // 批量清除
+                if (CollUtil.isNotEmpty(iconFileIds)) {
+                    // TODO: 每个图片都是一条 OUTBOX，当分类涉及大批量时或者删除造成瓶颈时可转为批量修改
+                    iconFileIds.forEach(iconFileId -> appendIconFileDeleteOutbox(categoryId, iconFileId));
+                }
+            });
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new BizException(CommodityResponseCodeEnum.CATEGORY_OPERATION_BUSY);
+        } finally {
+            if (locked && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
     }
 
     @Override
     public void updateCategoryById(UpdateCommodityCategoryReqVO categoryReqVO) {
-        // 先看分类是否存在
-        CommodityCategoryDO commodityCategoryDO = commodityCategoryMapper.selectById(categoryReqVO.getCategoryId());
-
-        if (Objects.isNull(commodityCategoryDO)) {
-            throw new BizException(CommodityResponseCodeEnum.CATEGORY_NOT_FOUND);
-        }
-        boolean needUpdate = false;
-        CommodityCategoryDO updateCommodityCategoryDO = new CommodityCategoryDO();
         Long categoryId = categoryReqVO.getCategoryId();
-        updateCommodityCategoryDO.setCategoryId(categoryId);
+        RLock lock = redissonClient.getLock(
+                CommodityCategoryLockKeys.CATEGORY_STRUCTURE_WRITE_LOCK
+        );
 
-        // 分类名
-        String categoryName = categoryReqVO.getCategoryName();
-        if (Objects.nonNull(categoryName) && !Objects.equals(categoryName, commodityCategoryDO.getCategoryName())) {
-            Preconditions.checkArgument(StringUtils.isNotBlank(categoryName), CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage());
-            updateCommodityCategoryDO.setCategoryName(categoryName);
-            needUpdate = true;
-        }
-
-        // 排序顺序
-        Integer sortOrder = categoryReqVO.getSortOrder();
-        if (Objects.nonNull(sortOrder) && !Objects.equals(sortOrder, commodityCategoryDO.getSortOrder())) {
-            Preconditions.checkArgument(sortOrder >= 0, CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage());
-            updateCommodityCategoryDO.setSortOrder(sortOrder);
-            needUpdate = true;
-        }
-
-        // 状态
-        Integer status = categoryReqVO.getStatus();
-        if (Objects.nonNull(status) && !Objects.equals(status, commodityCategoryDO.getStatus().getCode())) {
-            Preconditions.checkArgument(CategoryStatusEnum.isValid(status), CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage());
-            updateCommodityCategoryDO.setStatus(CategoryStatusEnum.fromCode(status));
-            needUpdate = true;
-        }
-
-        // icon 图标
-        MultipartFile iconFile = categoryReqVO.getIconFile();
-        Long invalidIconFileId = null;
+        boolean locked = false;
         Long newIconFileId = null;
-        if (iconFile != null && !iconFile.isEmpty()) {
-            newIconFileId = ossRemoteService.uploadFile(iconFile).fileId();
-            invalidIconFileId = commodityCategoryDO.getIconFileId();
-            updateCommodityCategoryDO.setIconFileId(newIconFileId);
-            needUpdate = true;
-        }
-
-        if (!needUpdate) {
-            return ;
-        }
-
-
-        final Long oldIconFileId = invalidIconFileId;
-        // 在同一事务中更新分类，并写入缓存失效、旧图标删除事件
         try {
+            locked = lock.tryLock(3, TimeUnit.SECONDS);
+            if (!locked) {
+                throw new BizException(CommodityResponseCodeEnum.CATEGORY_OPERATION_BUSY);
+            }
+
+            // 加锁后查询，避免与新增、删除和其他状态变更交叉执行。
+            CommodityCategoryDO commodityCategoryDO =
+                    commodityCategoryMapper.selectById(categoryId);
+            if (Objects.isNull(commodityCategoryDO)) {
+                throw new BizException(CommodityResponseCodeEnum.CATEGORY_NOT_FOUND);
+            }
+
+            boolean needUpdate = false;
+            CommodityCategoryDO updateCommodityCategoryDO =
+                    new CommodityCategoryDO();
+            updateCommodityCategoryDO.setCategoryId(categoryId);
+
+            String categoryName = categoryReqVO.getCategoryName();
+            if (Objects.nonNull(categoryName)
+                    && !Objects.equals(categoryName, commodityCategoryDO.getCategoryName())) {
+                Preconditions.checkArgument(
+                        StringUtils.isNotBlank(categoryName),
+                        CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage()
+                );
+                updateCommodityCategoryDO.setCategoryName(categoryName);
+                needUpdate = true;
+            }
+
+            Integer sortOrder = categoryReqVO.getSortOrder();
+            if (Objects.nonNull(sortOrder)
+                    && !Objects.equals(sortOrder, commodityCategoryDO.getSortOrder())) {
+                Preconditions.checkArgument(
+                        sortOrder >= 0,
+                        CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage()
+                );
+                updateCommodityCategoryDO.setSortOrder(sortOrder);
+                needUpdate = true;
+            }
+
+            Integer status = categoryReqVO.getStatus();
+            if (Objects.nonNull(status)
+                    && !Objects.equals(status, commodityCategoryDO.getStatus().getCode())) {
+                Preconditions.checkArgument(
+                        CategoryStatusEnum.isValid(status),
+                        CommonResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage()
+                );
+                // 只更新当前分类；子分类保持它们原有的状态。
+                updateCommodityCategoryDO.setStatus(CategoryStatusEnum.fromCode(status));
+                needUpdate = true;
+            }
+
+            Long invalidIconFileId = null;
+            MultipartFile iconFile = categoryReqVO.getIconFile();
+            if (iconFile != null && !iconFile.isEmpty()) {
+                newIconFileId = ossRemoteService.uploadFile(iconFile).fileId();
+                invalidIconFileId = commodityCategoryDO.getIconFileId();
+                updateCommodityCategoryDO.setIconFileId(newIconFileId);
+                needUpdate = true;
+            }
+
+            if (!needUpdate) {
+                return;
+            }
+
+            Long oldIconFileId = invalidIconFileId;
             transactionTemplate.executeWithoutResult(transactionStatus -> {
+                updateCommodityCategoryDO.setUpdateTime(LocalDateTime.now());
                 int updatedRows = commodityCategoryMapper.updateById(updateCommodityCategoryDO);
                 // 防止在更新时已经被删除了，后续的 outbox 事件应该停止
                 if (updatedRows != 1) {
@@ -201,12 +245,83 @@ public class CommodityCategoryServiceImpl implements CommodityCategoryService {
                     appendIconFileDeleteOutbox(categoryId, oldIconFileId);
                 }
             });
-        } catch (DataIntegrityViolationException e) {
+        } catch (DuplicateKeyException e) {
             appendNewIconCleanupOutbox(categoryId, newIconFileId);
             throw new BizException(CommodityResponseCodeEnum.CATEGORY_NAME_ALREADY_EXISTS);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new BizException(CommodityResponseCodeEnum.CATEGORY_OPERATION_BUSY);
         } catch (RuntimeException e) {
             appendNewIconCleanupOutbox(categoryId, newIconFileId);
             throw e;
+        } finally {
+            if (locked && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
+        }
+    }
+
+    @Override
+    public void insertCategory(InsertCommodityCategoryReqVO categoryReqVO) {
+        RLock lock = redissonClient.getLock(CommodityCategoryLockKeys.CATEGORY_STRUCTURE_WRITE_LOCK);
+
+
+        boolean locked = false;
+        Long iconFileId = null;
+        try {
+            locked = lock.tryLock(3, TimeUnit.SECONDS);
+            if (!locked) {
+                throw new BizException(CommodityResponseCodeEnum.CATEGORY_OPERATION_BUSY);
+            }
+            MultipartFile iconFile = categoryReqVO.getIconFile();
+            if (iconFile != null && !iconFile.isEmpty()) {
+                iconFileId = ossRemoteService.uploadFile(categoryReqVO.getIconFile()).fileId();
+            }
+
+            final Long newIconFileId = iconFileId;
+            transactionTemplate.executeWithoutResult(transactionStatus -> {
+                // 父分类是否存在+是否启用
+                Long parentId = categoryReqVO.getParentId();
+                if (!ROOT_ID.equals(parentId)) {
+                    CommodityCategoryDO parentCategory = commodityCategoryMapper.selectById(parentId);
+                    if (parentCategory == null) {
+                        throw new BizException(CommodityResponseCodeEnum.PARENT_CATEGORY_NOT_FOUND);
+                    }
+                    if (parentCategory.getStatus().equals(CategoryStatusEnum.DISABLED)) {
+                        throw new BizException(CommodityResponseCodeEnum.PARENT_CATEGORY_DISABLED);
+                    }
+                }
+                // 唯一键约束
+                CommodityCategoryDO newCommodityCategory = CommodityCategoryDO.builder()
+                        .parentId(parentId)
+                        .categoryName(categoryReqVO.getCategoryName())
+                        .sortOrder(categoryReqVO.getSortOrder() == null ? 0 : categoryReqVO.getSortOrder())
+                        .iconFileId(newIconFileId)
+                        .status(CategoryStatusEnum.ENABLED)
+                        .build();
+                commodityCategoryMapper.insert(newCommodityCategory);
+                LocalDateTime now = LocalDateTime.now();
+                appendCacheInvalidationOutbox(newCommodityCategory.getCategoryId(), now);
+                appendCacheInvalidationOutbox(newCommodityCategory.getCategoryId(), now.plus(commodityCategoryCacheProperties.getDelayedInvalidationDelay()));
+            });
+        // 唯一键约束异常
+        } catch (DuplicateKeyException e) {
+            if (Objects.nonNull(iconFileId)) {
+                appendNewIconCleanupOutbox(categoryReqVO.getParentId(), iconFileId);
+            }
+            throw new BizException(CommodityResponseCodeEnum.CATEGORY_NAME_ALREADY_EXISTS);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new BizException(CommodityResponseCodeEnum.CATEGORY_OPERATION_BUSY);
+        } catch (RuntimeException e) {
+            if (Objects.nonNull(iconFileId)) {
+                appendNewIconCleanupOutbox(categoryReqVO.getParentId(), iconFileId);
+            }
+            throw e;
+        } finally {
+            if (locked && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
 
     }
