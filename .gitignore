@@ -1,3 +1,5 @@
+### Maven / Gradle ###
+build/
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -8,6 +10,7 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -42,5 +45,6 @@ build/
 **/config/secret*.yml
 
 # log
-./log
-./logs
+**/log/
+**/logs/
+*.log
